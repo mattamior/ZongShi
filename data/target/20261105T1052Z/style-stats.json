@@ -1,0 +1,424 @@
+{
+  "input": {
+    "capture_dir": "data/target/20261105T1052Z",
+    "authored": 3223,
+    "replies": 3034,
+    "originals": 163,
+    "collection": {
+      "started_at_utc": "2026-11-05T10:52:11.147244+00:00",
+      "finished_at_utc": "2026-11-05T10:58:31.090457+00:00",
+      "page_count": 164,
+      "timeline_rows": 6539,
+      "unique_timeline_statuses": 6217,
+      "duplicate_rows": 322,
+      "authored_statuses": 3223,
+      "reply_count": 3034,
+      "original_count": 189,
+      "reposts_excluded": 0,
+      "oldest_timestamp": 1793112698,
+      "newest_timestamp": 1793873816,
+      "reported_vs_observed_ratio": 0.4875,
+      "api_cursor_exhausted": false,
+      "termination_reason": "empty_page_with_continuation_cursor"
+    }
+  },
+  "time_range_utc": {
+    "oldest": "2026-10-27T14:51:38+00:00",
+    "newest": "2026-11-05T10:16:56+00:00"
+  },
+  "reply_share": 0.9414,
+  "replies": {
+    "count": 3034,
+    "starts_with_mention": {
+      "count": 3032,
+      "share": 0.9993
+    },
+    "body_length": {
+      "median": 4,
+      "p90": 10,
+      "mean": 5.59,
+      "max": 124
+    },
+    "terminal_punctuation": {
+      "none": 2974,
+      "share_none": 0.9802,
+      "question": 40,
+      "exclamation": 8,
+      "period_or_tilde": 10
+    },
+    "emoji": {
+      "with_emoji": 467,
+      "share": 0.1539,
+      "at_line_end": 401,
+      "emoji_only_body": 272,
+      "repeat_runs": 275,
+      "top": [
+        [
+          "😱",
+          286
+        ],
+        [
+          "😂",
+          223
+        ],
+        [
+          "🤣",
+          143
+        ],
+        [
+          "😭",
+          94
+        ],
+        [
+          "😁",
+          38
+        ],
+        [
+          "🙏",
+          16
+        ],
+        [
+          "😍",
+          13
+        ],
+        [
+          "🥚",
+          7
+        ],
+        [
+          "😡",
+          5
+        ],
+        [
+          "👌",
+          5
+        ]
+      ]
+    },
+    "multi_line": {
+      "count": 1,
+      "share": 0.0003
+    },
+    "distinct_bodies": 1977,
+    "top_bodies": [
+      [
+        "是的",
+        122
+      ],
+      [
+        "哈哈哈哈",
+        77
+      ],
+      [
+        "😂😂",
+        44
+      ],
+      [
+        "😱😱😱",
+        43
+      ],
+      [
+        "😱😱",
+        34
+      ],
+      [
+        "加油",
+        31
+      ],
+      [
+        "哈哈哈",
+        30
+      ],
+      [
+        "恭喜恭喜",
+        26
+      ]
+    ]
+  },
+  "originals": {
+    "count": 163,
+    "starts_with_mention": {
+      "count": 0,
+      "share": 0.0
+    },
+    "body_length": {
+      "median": 41,
+      "p90": 74,
+      "mean": 71.76,
+      "max": 2227
+    },
+    "terminal_punctuation": {
+      "none": 78,
+      "share_none": 0.4785,
+      "question": 42,
+      "exclamation": 14,
+      "period_or_tilde": 29
+    },
+    "emoji": {
+      "with_emoji": 39,
+      "share": 0.2393,
+      "at_line_end": 30,
+      "emoji_only_body": 1,
+      "repeat_runs": 19,
+      "top": [
+        [
+          "😱",
+          32
+        ],
+        [
+          "😭",
+          13
+        ],
+        [
+          "🤣",
+          12
+        ],
+        [
+          "😡",
+          4
+        ],
+        [
+          "🇨",
+          3
+        ],
+        [
+          "🇳",
+          3
+        ],
+        [
+          "🤮",
+          3
+        ],
+        [
+          "👍",
+          2
+        ],
+        [
+          "🤯",
+          2
+        ],
+        [
+          "🇩",
+          1
+        ]
+      ]
+    },
+    "multi_line": {
+      "count": 127,
+      "share": 0.7791
+    },
+    "distinct_bodies": 162,
+    "top_bodies": [
+      [
+        "今天的流量密码是？",
+        2
+      ],
+      [
+        "卧槽卧槽！！好消息！\n\n深圳现在已经没有墙了，可以直连外网！\n\n难道中国要学习越南，全面放开？😱😱\n\n以后再也不用翻墙了？\n\n😱😱😱",
+        1
+      ],
+      [
+        "操他妈的，我真想不通：\n\n扫黑除恶这么多年\n\n贪官腐败抓了这么多\n\n黑社会、小混混也都不见了\n\n怎么经济还能搞成这个b样？",
+        1
+      ],
+      [
+        "卧槽！！事大了！\n\n外交部说非常重视姆巴佩的道歉\n\n是不是意味着\n\n已经原谅姆巴佩了？？",
+        1
+      ],
+      [
+        "卧槽！！事大了！\n\n千万不要在X上发微信收款码\n\n我朋友发了一个，被网警锁定支付信息\n\n已经进去喝茶了！！\n\n😱😱😱",
+        1
+      ],
+      [
+        "想到一件很恐怖的事：\n\n姆巴佩以后是不是三代不能考公了？\n\n小伙子这辈子都毁了！\n\n😭😭😭",
+        1
+      ],
+      [
+        "卧槽！！卧槽卧槽！\n\n深圳已经开始小批量直连外网了\n\n我朋友不挂vpn也能刷脆和X\n\n以后深圳就是中国第一城！！\n\n😱😱😱",
+        1
+      ],
+      [
+        "哪位兄弟知道我今天流量不好，给我发个这么大的😱",
+        1
+      ]
+    ]
+  },
+  "mention_led_without_reply_metadata": 26,
+  "reply_registers_heuristic": {
+    "emoji_only": 297,
+    "ack": 495,
+    "laugh": 336,
+    "other": 1635,
+    "shock": 161,
+    "question": 108,
+    "empty": 2
+  },
+  "original_openers": [
+    [
+      "不懂就问",
+      17
+    ],
+    [
+      "卧槽！天塌了！！",
+      4
+    ],
+    [
+      "我很好奇",
+      4
+    ],
+    [
+      "说个冷知识：",
+      4
+    ],
+    [
+      "卧槽！事大了！！",
+      3
+    ],
+    [
+      "卧槽！",
+      3
+    ],
+    [
+      "说个事实：",
+      3
+    ],
+    [
+      "卧槽！！事大了！",
+      2
+    ],
+    [
+      "今天的流量密码是？",
+      2
+    ],
+    [
+      "我很好奇：",
+      2
+    ],
+    [
+      "卧槽卧槽！！好消息！",
+      1
+    ],
+    [
+      "操他妈的，我真想不通：",
+      1
+    ]
+  ],
+  "original_shape": {
+    "question_share": 0.4479,
+    "grok_share": 0.184,
+    "line_count_median": 5
+  },
+  "reply_targets_top": [
+    [
+      "EVAtk7b",
+      61
+    ],
+    [
+      "jackiez000",
+      54
+    ],
+    [
+      "RichWang013",
+      47
+    ],
+    [
+      "zhng684890591",
+      38
+    ],
+    [
+      "Qiyaqiyoo",
+      37
+    ],
+    [
+      "LSBBBAAA",
+      36
+    ],
+    [
+      "wangxer233",
+      31
+    ],
+    [
+      "HenryLin511",
+      30
+    ],
+    [
+      "pnsin1",
+      29
+    ],
+    [
+      "Andy_whhh",
+      28
+    ],
+    [
+      "fzc8848848",
+      25
+    ],
+    [
+      "Yuziyyaa",
+      25
+    ],
+    [
+      "z1530359581",
+      25
+    ],
+    [
+      "Xiaoyzi_Web3",
+      25
+    ],
+    [
+      "DuMu_originaL",
+      22
+    ]
+  ],
+  "languages": [
+    [
+      "zh",
+      1809
+    ],
+    [
+      "ja",
+      1078
+    ],
+    [
+      "None",
+      328
+    ],
+    [
+      "en",
+      3
+    ],
+    [
+      "es",
+      2
+    ],
+    [
+      "is",
+      1
+    ],
+    [
+      "fr",
+      1
+    ],
+    [
+      "art",
+      1
+    ]
+  ],
+  "cadence_all": {
+    "gaps_median_s": 29,
+    "gaps_p90_s": 416,
+    "gaps_mean_s": 236.2,
+    "under_60s_share": 0.6428,
+    "over_2h": 11,
+    "bursts": 816,
+    "burst_size_max": 55,
+    "burst_size_median": 2,
+    "posts_per_hour": 15.24
+  },
+  "notes": [
+    "Body length strips leading @mentions only; it measures Unicode code points, not visual width.",
+    "Emoji detection uses bounded code-point ranges and excludes skin-tone modifiers; it is a heuristic.",
+    "Register labels are regex heuristics, not linguistic classification; check the counts against samples.",
+    "API `lang` tags are noisy (Chinese is often tagged `ja`); do not use them as a language split."
+  ]
+}

@@ -4,9 +4,10 @@
 - Authorized Project Entry Point: this repository root (`/Users/jaymini/Code/lab/xcom/ZongShi`).
 - Agnir Core/profile: `1.0` / `repository-filesystem/1.0`; primary lineage: `urn:zongshi:lineage:primary`; distribution `v1.0.2` from revision `b5626394ec40a5cb7a28c01892acde07cc0adc8e`.
 - **Phase: research only (Principal, 2026-11-05).** 采集、分析、规范、自评；不接账号、不发布。发送段（`send.py` / `record_sent.py` / `metrics.py` / `candidates/` / `review/` / `sent/`）整体后置，研究阶段不建。
-- Current artifacts: `PLAN.md`（方案与决策记录）、`README.md`、`AGNIR.*`。`data/`、`style/`、`scripts/` 尚未创建，属 P0–P2 交付物。
-- 唯一已采数据是一次**探索性抽样**（2026-11-05 手动抓取，10 页 / 414 行 / 204 条本人帖，覆盖 2026-11-04T16:42Z–11-05T10:16Z，约 18 小时），未落盘到本仓库，也未通过本仓库脚本复现。因此 `PLAN.md` §1 的所有数字是**样本结论**，不是全量结论；P0 全量采集后必须重算并以全量为准。
-- 抽样期的量级（待全量复核）：目标号 6,611 条状态、6,616 粉、5,653 关注、2026-09-30 注册；样本里回复占 91.2%、回复正文中位 4 字、100% 以 `@` 开头、98.4% 无句尾标点、😱 占表情 57%，原创中位 41 字、均 13,625 浏览。
+- Current artifacts: `PLAN.md`、`README.md`、`STYLE.md`、`style/target-style.json`、`style/prompt.md`、`style/new-account.json`、`scripts/collect_target.py`、`scripts/analyze_style.py`、`data/target/20261105T1052Z/`。
+- Corpus (2026-11-05 capture, `data/target/20261105T1052Z/`): 164 页 / 6,539 行 / 6,217 唯一状态；本人 **3,223** 条（回复 3,034 / 原创 163 / 带 @ 缺回复元数据 26），时间 2026-10-27T14:51Z–11-05T10:16Z。资料页报告 6,611 条，观察比 **48.8%**；末页 0 行仍带 cursor，尾部另探 8 页全空——缺口在 2026-10-27 之前，属第三方接口深度上限，不是账号全量。
+- 风格结论（全量复算）：回复 99.93% 以 @ 开头、正文中位 4 码位 / p90 10、98.0% 无句尾标点、15.4% 带表情（😱 286 为首）、纯表情 9.0%、14 字以上极少；原创 163 条中位 41 码位、5 行、77.9% 多行、44.8% 含问号、18.4% 挂 @grok；节奏 15.2 条/小时、间隔中位 29 秒。
+- `PLAN.md` §1 仍保留 18 小时探索性抽样的数字（204 条），它们是方案阶段的临时结论；**以 `STYLE.md` 的全量数字为准**，两者差异已在 evidence 中标注。
 - Decisions in force: 见 `PLAN.md` §8 与 `.agnir/decisions.md`。摘要——争议内容按对标手法复刻但每条须有来源锚点；长文整类延后；抓全量；接 Agnir；人设只做接口层。
 - 接口人设（2026-11-05 定稿，`style/new-account.json`）：昵称 **ZongShi（互～）**、简介 **AI 弄潮儿**，不做固定自称（对标号无此特征）。handle 与头像由 Principal 开号时手动决定。
 - 选题不受简介约束（Principal 2026-11-05 纠正）：内容对标原号，配比由 P1 从全量语料实测（样本期参考：时政/社会 39%、八卦/娱乐 28%）。

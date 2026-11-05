@@ -1,7 +1,7 @@
 # Next Actions
 
-1. **P0 全量采集**：`scripts/collect_target.py --profile-ref 'id:2105258399885844480' --output-dir data/target/<ts>`，约 165 页、1.2 s 间隔。落盘原始页、`replies.jsonl` / `originals.jsonl`、`collection.json`（页数、行数、去重数、profile 报告状态数、`termination_reason`）。验收：唯一 ID / 报告状态数 ≥ 0.95；同 ID 正文跨页一致。
-2. **P1 规范**：`scripts/analyze_style.py` 在 `data/target/<ts>/` 上复算 `PLAN.md` §1 全部数字，产出 `STYLE.md` + `style/target-style.json` + `style/prompt.md`。重点复看 18 小时样本的偏差：话题配比、😱 频率、burst 结构在 36 天里是否稳定。
+1. ~~P0 全量采集~~ 完成 2026-11-05：`data/target/20261105T1052Z/`，3,223 条本人帖，覆盖 2026-10-27 之后；48.8% 观察比，缺口与边界见 `state.md` 与 evidence。
+2. ~~P1 规范~~ 完成 2026-11-05：`STYLE.md` + `style/target-style.json` + `style/prompt.md`，全部数字由 `scripts/analyze_style.py` 复算。
 3. **P2 生成与自评**：`scripts/build_prompt.py` + `scripts/analyze_gap.py`，20 条样稿对语料的长度/标点/emoji/连打四项分布，KS < 0.15 才算过。
 4. **接口人设**（`style/new-account.json`）：已完成——昵称 `ZongShi（互～）`、简介 `AI 弄潮儿`，不做固定自称。handle 与头像由 Principal 在开号时手动确定，Agent 不介入。
 5. **后置、需单独授权**：P3 发送与节奏、P4 增长闭环。启用前重新评估平台规则风险，并按 `PLAN.md` §5 的"后置"参数表执行。

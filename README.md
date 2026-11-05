@@ -5,7 +5,12 @@
 ## 当前产物
 
 - [PLAN.md](PLAN.md)：方案主体。目标账号风格实测（§1）、复刻边界（§2）、架构（§3）、分阶段（§4）、参数（§5）、验收（§6）、风险（§7）、决策记录（§8）。
-- 语料与规范尚未产出。本仓库目前没有 `data/`、`style/`、`scripts/`，它们是 P0–P2 的交付物。
+- [STYLE.md](STYLE.md)：全量语料的风格结论——覆盖 2026-10-27 至 11-05，3,223 条本人帖（回复 3,034 / 原创 163）。
+- [style/target-style.json](style/target-style.json)：机器可读规范（硬规则、语域菜单、真实例句、指标、题材配比）。
+- [style/prompt.md](style/prompt.md)：可直接复制的提示词（回复 + 原创）。
+- [style/new-account.json](style/new-account.json)：新号接口人设（ZongShi（互～）/ AI 弄潮儿）。
+- [data/target/20261105T1052Z/](data/target/20261105T1052Z/)：原始页 + `authored/replies/originals.jsonl` + `collection.json` + `style-stats.json`。
+- 统计复算：`python3 scripts/analyze_style.py data/target/20261105T1052Z`。
 
 ## 已定边界（摘要）
 

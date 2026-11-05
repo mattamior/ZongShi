@@ -1,0 +1,42 @@
+{
+  "account": {
+    "handle": "FKFKFKFKFKTB",
+    "id": "2105258399885844480",
+    "display_name": "高水水（互～）",
+    "profile_url": "https://x.com/FKFKFKFKFKTB",
+    "reported_status_count_at_capture": 6611,
+    "followers": 6620,
+    "following": 5652,
+    "joined": "Wed Sep 30 11:31:01 +0000 2026"
+  },
+  "source": {
+    "provider": "FxTwitter public API",
+    "endpoint": "https://api.fxtwitter.com/2/profile/id:2105258399885844480/statuses",
+    "parameters": {
+      "count": 100,
+      "with_replies": "1",
+      "profile_ref": "id:2105258399885844480"
+    },
+    "client_authentication": "none; no cookies, tokens, or API keys are sent",
+    "raw_pages": "source/pages/page-*.json",
+    "progress": "source/progress.json"
+  },
+  "collection": {
+    "started_at_utc": "2026-11-05T10:52:11.147244+00:00",
+    "finished_at_utc": "2026-11-05T10:58:31.090457+00:00",
+    "page_count": 164,
+    "timeline_rows": 6539,
+    "unique_timeline_statuses": 6217,
+    "duplicate_rows": 322,
+    "authored_statuses": 3223,
+    "reply_count": 3034,
+    "original_count": 189,
+    "reposts_excluded": 0,
+    "oldest_timestamp": 1793112698,
+    "newest_timestamp": 1793873816,
+    "reported_vs_observed_ratio": 0.4875,
+    "api_cursor_exhausted": false,
+    "termination_reason": "empty_page_with_continuation_cursor"
+  },
+  "coverage_note": "termination_reason='empty_page_with_continuation_cursor'; api_cursor_exhausted=False. Third-party upstream, not the owner's official export. Deleted, withheld, protected, or upstream-omitted posts may be absent; do not describe this as a guaranteed complete archive."
+}
