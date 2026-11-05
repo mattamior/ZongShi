@@ -1,0 +1,49 @@
+{
+  "account": {
+    "display_name": "ZongShi（互～）",
+    "handle": null,
+    "bio": "AI 弄潮儿",
+    "status": "接口层已定稿（2026-11-05）；handle 与头像待开号时补"
+  },
+  "persona_layer": "interface",
+  "why": "对标号 @FKFKFKFKFKTB 的名字后缀「（互～）」是转化器，简介负责给一个关注理由。两者都不需要真实战绩，因此只做接口层，不做身份层（见 PLAN.md §8.1）。",
+  "elements": {
+    "mutual_follow_signal": {
+      "value": "（互～）",
+      "role": "把主页访问直接变成回关承诺；对标号实测 6,616 粉 / 5,653 关注 ≈ 85% 互关",
+      "source": "nickname suffix"
+    },
+    "one_line_bio": {
+      "value": "AI 弄潮儿",
+      "role": "3 秒内给出关注理由；4 个字，与对标号的短简介同韵",
+      "check": "不含学历 / 执业 / 机构 / 考试分数 / 收益数字"
+    },
+    "fixed_self_label": {
+      "value": null,
+      "candidates": ["弄潮儿"],
+      "role": "对标号用「互浇侠」（25 条回复），出现频率 3–5%，作为可识别标签",
+      "status": "待定：可由简介词「弄潮儿」兼任，形如「弄潮儿来了」"
+    }
+  },
+  "topic_trios": [
+    "AI 模型与工具（新模型、新功能、实测）",
+    "AI 应用与产品（用 AI 干活，可验证的使用场景）",
+    "AI 与内容创作（图文/视频生产、平台算法观察）"
+  ],
+  "topic_trios_note": "简介只给 AI 一格，话题随之收敛到 AI 三件。对标号是「临床/AI/USMLE/币圈」四格，本项目不复刻非 AI 部分；币圈/医疗只在别人帖下接话时可以出现，不作为原创选题。",
+  "identity_layer": {
+    "enabled": false,
+    "banned": [
+      "学历、院校、执业资格、考试成绩（如 USMLE 分数）",
+      "机构、公司、项目归属",
+      "收益数字、粉丝数字、上岸战绩",
+      "真实姓名、照片、地理位置细节"
+    ],
+    "fallback_when_asked": "「不是专业的，随口一说」——降级，不编细节"
+  },
+  "open_questions": [
+    "handle 叫什么（需与 display_name 一致且未被占用）",
+    "固定自称用「弄潮儿」还是另起",
+    "头像风格（对标号是人物照片，本项目不提供真实照片，需另定）"
+  ]
+}
