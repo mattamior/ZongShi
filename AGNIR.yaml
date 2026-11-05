@@ -1,0 +1,25 @@
+agnir:
+  version: "1.0"
+  discovery_profile: "repository-filesystem/1.0"
+
+project:
+  identity: "urn:zongshi:project:x-style-replication"
+
+continuity:
+  lineage: "urn:zongshi:lineage:primary"
+
+memory:
+  state: ".agnir/state.md"
+  next_actions: ".agnir/next-actions.md"
+  decisions: ".agnir/decisions.md"
+  evidence: ".agnir/evidence/"
+
+policy:
+  checkpoint: "event-driven"
+
+extensions:
+  agnir/operations:
+    distribution: "agnir-agent-skill"
+    release: "v1.0.2"
+    source: "iorLab/agnir"
+    applied_revision: "b5626394ec40a5cb7a28c01892acde07cc0adc8e"
