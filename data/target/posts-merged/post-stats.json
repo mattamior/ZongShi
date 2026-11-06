@@ -1,10 +1,10 @@
 {
   "input": "data/target/posts-merged/posts.jsonl",
-  "count": 293,
+  "count": 298,
   "window_utc": {
     "first": "2026-10-20T11:15:45+00:00",
-    "last": "2026-11-05T17:36:17+00:00",
-    "days": 17,
+    "last": "2026-11-06T05:05:12+00:00",
+    "days": 18,
     "per_day": {
       "2026-10-20": 4,
       "2026-10-21": 8,
@@ -22,28 +22,29 @@
       "2026-11-02": 18,
       "2026-11-03": 16,
       "2026-11-04": 18,
-      "2026-11-05": 18
+      "2026-11-05": 18,
+      "2026-11-06": 5
     }
   },
   "structure": {
     "length_codepoints": {
       "median": 41,
       "p90": 80,
-      "mean": 62.7,
+      "mean": 62.8,
       "max": 2227
     },
     "lines_median": 3,
     "lines_p90": 5,
-    "multi_line_share": 0.7986,
-    "blank_line_between_share": 0.7679,
-    "question_share": 0.4744,
-    "grok_tag_share": 0.1604,
-    "emoji_share": 0.256,
-    "media_share": 0.1911,
+    "multi_line_share": 0.802,
+    "blank_line_between_share": 0.7718,
+    "question_share": 0.4698,
+    "grok_tag_share": 0.1577,
+    "emoji_share": 0.255,
+    "media_share": 0.1879,
     "emoji_top": [
       [
         "😱",
-        81
+        82
       ],
       [
         "😭",
@@ -78,13 +79,13 @@
   "openers": [
     {
       "opener": "其他",
-      "count": 160,
-      "views_median": 2408,
+      "count": 164,
+      "views_median": 2405,
       "likes_median": 8
     },
     {
       "opener": "卧槽系",
-      "count": 47,
+      "count": 48,
       "views_median": 5617,
       "likes_median": 10
     },
@@ -120,18 +121,18 @@
     }
   ],
   "topics_heuristic": {
-    "日常/其他": 126,
-    "时政/社会": 121,
+    "日常/其他": 130,
+    "时政/社会": 122,
     "AI/科技": 20,
     "娱乐/八卦": 20,
     "币圈": 6
   },
   "reach": {
     "views": {
-      "median": 2784,
+      "median": 2709,
       "p90": 52021,
       "max": 2098984,
-      "sum": 11403969
+      "sum": 11406998
     },
     "likes": {
       "median": 9,
@@ -176,10 +177,10 @@
     ]
   },
   "cadence": {
-    "posts_per_hour": 0.75,
-    "gap_median_s": 2387,
-    "gap_p90_s": 9490,
-    "under_10min_share": 0.0068
+    "posts_per_hour": 0.74,
+    "gap_median_s": 2381,
+    "gap_p90_s": 9754,
+    "under_10min_share": 0.0135
   },
   "hour_of_day_utc8": {
     "0": 9,
@@ -190,9 +191,9 @@
     "8": 3,
     "9": 8,
     "10": 12,
-    "11": 14,
+    "11": 18,
     "12": 15,
-    "13": 19,
+    "13": 20,
     "14": 19,
     "15": 18,
     "16": 20,

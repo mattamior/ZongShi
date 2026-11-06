@@ -1,0 +1,10 @@
+{"id": "d01", "slot": "上午", "template": "卧槽系", "claim": "assertion", "text": "卧槽！！\n\n独生子女不一定能继承父母全部遗产\n\n那房子最后归谁\n\n亲戚排队来分？😱😱", "source_url": "https://www.toutiao.com/trending/7704091975108018195/", "source_title": "独生子女不一定能继承父母全部遗产"}
+{"id": "d02", "slot": "上午", "template": "卧槽系", "claim": "assertion", "text": "卧槽！！\n\n东北把煤直接变成天然气了\n\n一年几十亿方\n\n那煤还烧不烧😱", "source_url": "https://www.zhihu.com/question/2100904326705296766", "source_title": "东北最大煤制天然气项目正式投产，煤炭将被转化成天然气"}
+{"id": "d03", "slot": "中午", "template": "冷知识并置", "claim": "observation", "text": "世界第一被 0-3 横扫。\n\n球台还是那张球台。"}
+{"id": "d04", "slot": "中午", "template": "不懂就问", "claim": "question", "text": "月薪八千，同事天天点星巴克下午茶。\n\n我是该学他，还是该换同事？"}
+{"id": "d05", "slot": "下午", "template": "无模板", "claim": "observation", "text": "十三岁女孩失联半个月，一直藏在同学家玩手机。\n\n找人的和藏人的，隔着一道门。"}
+{"id": "d06", "slot": "下午", "template": "我很好奇", "claim": "question", "text": "美国多州要暂停审批 AI 数据中心。\n\n算力不够的时候，先停的是审批还是模型？"}
+{"id": "d07", "slot": "傍晚", "template": "问句开头", "claim": "observation", "text": "空调机位开在够不着的地方。\n\n装的时候吊绳，修的时候拆窗。"}
+{"id": "d08", "slot": "晚上", "template": "问句开头", "claim": "question", "text": "进博会上卖得最好的是养老产品。\n\n买的人是自己用，还是替父母先看着？"}
+{"id": "d09", "slot": "下午", "template": "不懂就问", "claim": "question", "text": "不懂就问\n\n为什么每个 App 的第一屏\n\n都要放一个我永远不会点的「活动中心」\n\n关掉还得再进两层设置，这按钮是给谁准备的？"}
+{"id": "d10", "slot": "晚上", "template": "无模板", "claim": "observation", "text": "楼下便利店把冰柜挪到门口，说这样显眼。\n\n现在每次进门都要侧身过，买瓶水像过障碍赛。"}

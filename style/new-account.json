@@ -1,22 +1,29 @@
 {
   "account": {
-    "display_name": "ZongShi（互～）",
-    "handle": null,
-    "bio": "AI 弄潮儿",
-    "status": "接口层已定稿（2026-11-05）；handle 与头像待开号时补"
+    "display_name": "lapplax",
+    "handle": "lapplax",
+    "bio": "share big things for real",
+    "status": "已开号并开通蓝 V（Principal 2026-11-06 告知）；名字与 bio 当前不可修改，原计划 ZongShi（互～）/「AI 弄潮儿」作废",
+    "planned_but_unusable": {
+      "display_name": "ZongShi（互～）",
+      "bio": "AI 弄潮儿"
+    }
   },
   "persona_layer": "interface",
   "why": "对标号 @FKFKFKFKFKTB 的名字后缀「（互～）」是转化器，简介负责给一个关注理由。两者都不需要真实战绩，因此只做接口层，不做身份层（见 PLAN.md §8.1）。",
   "elements": {
     "mutual_follow_signal": {
-      "value": "（互～）",
-      "role": "把主页访问直接变成回关承诺；对标号实测 6,616 粉 / 5,653 关注 ≈ 85% 互关",
-      "source": "nickname suffix"
+      "value": null,
+      "status": "已失效",
+      "role": "原计划用「（互～）」把主页访问转成回关承诺（对标实测 85% 互关）",
+      "why_lost": "蓝 V 账号当前不能改名，昵称已是 lapplax，没有后缀位",
+      "workaround": "研究阶段不做发送，暂不补；若后续要补，只能在置顶帖或主页封面里表达，不进昵称"
     },
     "one_line_bio": {
-      "value": "AI 弄潮儿",
-      "role": "3 秒内给出关注理由；4 个字，与对标号的短简介同韵",
-      "check": "不含学历 / 执业 / 机构 / 考试分数 / 收益数字"
+      "value": "share big things for real",
+      "role": "现状，不可改。语义偏「讲真的大事」，比原计划「AI 弄潮儿」更宽，也更偏时政/大事",
+      "check": "仍不含学历 / 执业 / 机构 / 分数 / 收益数字",
+      "content_implication": "bio 承诺 big things，日常琐事占比不宜过高；建议时政/大事与 AI 略加权，日常降到约 35%"
     },
     "fixed_self_label": {
       "value": null,
@@ -49,7 +56,7 @@
     "fallback_when_asked": "「不是专业的，随口一说」——降级，不编细节"
   },
   "principal_manual": [
-    "handle：由 Principal 在开号时手动确定，需与 display_name 一致且未被占用",
-    "头像：由 Principal 手动确定"
+    "头像：仍由 Principal 手动确定（名字与 bio 已不可改）",
+    "若蓝 V 后续允许改名，再评估是否加「（互～）」"
   ]
 }

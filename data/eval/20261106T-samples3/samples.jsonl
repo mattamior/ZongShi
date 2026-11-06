@@ -1,0 +1,20 @@
+{"id": "c01", "topic": "时政/社会", "template": "卧槽系", "claim": "assertion", "text": "卧槽！！\n\n招老师要无薪跟岗一年\n\n干满才给编制\n\n这一年算什么，实习、试用，还是白干😱😱", "source_url": "https://www.baidu.com/s?wd=%E6%97%A0%E8%96%AA%E8%B7%9F%E5%B2%97%20%E6%95%99%E5%B8%88%E6%8B%9B%E8%81%98", "source_title": "无薪跟岗 教师招聘不带这么羞辱人的"}
+{"id": "c02", "topic": "时政/社会", "template": "卧槽系", "claim": "assertion", "text": "卧槽！！\n\n南京有家面馆不收钱\n\n吃完直接走，谁想给就扫墙上的码\n\n老板是靠什么在活，情怀还是另有生意😱", "source_url": "https://www.toutiao.com/trending/7704521905939562515/", "source_title": "南京零元面馆爆火"}
+{"id": "c03", "topic": "日常", "template": "不懂就问", "claim": "question", "text": "超市购物车的轮子永远是歪的。\n\n推起来像开拖拉机，拐弯全靠抬，直行全靠怼。"}
+{"id": "c04", "topic": "日常", "template": "问句开头", "claim": "question", "text": "电梯关门键真有用吗？按十次九次自己关。"}
+{"id": "c05", "topic": "日常", "template": "我很好奇", "claim": "question", "text": "我很好奇\n\n为什么外卖上的预计送达\n\n永远是三十五分钟\n\n不管下暴雨、半夜，还是就隔一条街？@grok"}
+{"id": "c06", "topic": "时政/社会", "template": "无模板", "claim": "observation", "text": "小区物业把绿化带改成了停车位，公告上写「绿化率仍达标」。"}
+{"id": "c07", "topic": "时政/社会", "template": "不懂就问", "claim": "question", "text": "不懂就问\n\n为什么一到年底所有工程都开始赶工\n\n路挖开又填上，填好没两周再挖\n\n是预算没花完，还是花完了明年就批不下来？"}
+{"id": "c08", "topic": "时政/社会", "template": "问句开头", "claim": "question", "text": "为什么同一件事故\n\n上午的通报写「正在调查」\n\n下午就变成「已妥善处理」\n\n中间这六个小时发生了什么，是谁把「调查」改成了「处理」，改动要不要留痕？"}
+{"id": "c09", "topic": "AI/科技", "template": "我很好奇", "claim": "question", "text": "我很好奇\n\nAI 能写代码、能画图、能考过律师资格\n\n为什么还是不会帮我关掉弹窗广告？@grok"}
+{"id": "c10", "topic": "AI/科技", "template": "冷知识并置", "claim": "observation", "text": "说个冷知识\n\nAI 画的图里手指总是数不清\n\n现在它学会了把手藏到背后、兜里、袖子底下😱"}
+{"id": "c11", "topic": "娱乐/八卦", "template": "问句开头", "claim": "question", "text": "为什么明星道歉\n\n都要配一张黑白照片？\n\n彩色的是不是显得不够诚恳😡"}
+{"id": "c12", "topic": "日常", "template": "无模板", "claim": "observation", "text": "楼下理发店从三十八涨到五十八，师傅说是因为房租。\n\n可上个月他还说生意不好，一天剪不了几个头。\n\n那这二十块，是房租涨的还是人少涨的？"}
+{"id": "c13", "topic": "币圈", "template": "不懂就问", "claim": "question", "text": "不懂就问\n\n为什么每个币圈大佬\n\n都说自己在长期持有\n\n截图里却在不停换仓，一天三笔？\n\n长期到底指多久，还是指「我卖的时候不算」？"}
+{"id": "c14", "topic": "日常", "template": "无模板", "claim": "observation", "text": "旧手机攒了三年想卖钱，翻出来电池鼓了。"}
+{"id": "c15", "topic": "时政/社会", "template": "问句开头", "claim": "question", "text": "为什么小区门口的减速带\n\n越修越高\n\n现在过一趟像过山车，后排的头能撞到车顶😱"}
+{"id": "c16", "topic": "日常", "template": "无模板", "claim": "observation", "text": "便利店把热饮柜挪到了门口，说这样显眼。\n\n现在每次进门都得侧身过。"}
+{"id": "c17", "topic": "日常", "template": "我很好奇", "claim": "question", "text": "我很好奇\n\n为什么所有人的微信步数\n\n都在晚上十点突然涨一千\n\n@grok 是我一个人这样吗"}
+{"id": "c18", "topic": "时政/社会", "template": "我很好奇", "claim": "question", "text": "我很好奇\n\n为什么每份合同的最后\n\n都写着「最终解释权归本公司所有」\n\n签的时候说的是这些，出事了解释的是另一些，那签字那一刻到底算确认了什么？"}
+{"id": "c19", "topic": "日常", "template": "问句开头", "claim": "question", "text": "手机电量到百分之一还能撑十分钟，充满反而掉得飞快。\n\n电池在耍我。"}
+{"id": "c20", "topic": "日常", "template": "无模板", "claim": "observation", "text": "楼下快递柜开始收费了，超时一小时五毛。\n\n以前是免费的，现在取晚了像欠了它的。"}
