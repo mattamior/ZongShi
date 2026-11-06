@@ -1,0 +1,57 @@
+{
+  "corpus": "data/target/posts-merged/posts.jsonl",
+  "samples": "data/eval/20261106T-samples/samples.jsonl",
+  "corpus_metrics": {
+    "n": 298,
+    "length_p50": 41.0,
+    "length_p90": 80,
+    "length_mean": 62.8,
+    "length_bands": {
+      "0-20": 0.1242,
+      "21-40": 0.3557,
+      "41-60": 0.2752,
+      "61-80": 0.151,
+      "81+": 0.094
+    },
+    "no_terminal_punct_share": 0.3624,
+    "emoji_share": 0.2517,
+    "repeated_emoji_share": 0.1275,
+    "multi_line_share": 0.802,
+    "blank_line_share": 0.7718,
+    "question_share": 0.4698
+  },
+  "sample_metrics": {
+    "n": 22,
+    "length_p50": 44.5,
+    "length_p90": 68,
+    "length_mean": 44.0,
+    "length_bands": {
+      "0-20": 0.0909,
+      "21-40": 0.3636,
+      "41-60": 0.3636,
+      "61-80": 0.1818,
+      "81+": 0.0
+    },
+    "no_terminal_punct_share": 0.4091,
+    "emoji_share": 0.3182,
+    "repeated_emoji_share": 0.1364,
+    "multi_line_share": 0.8182,
+    "blank_line_share": 0.8182,
+    "question_share": 0.4545
+  },
+  "length_band_deltas": {
+    "0-20": -0.0333,
+    "21-40": 0.0079,
+    "41-60": 0.0884,
+    "61-80": 0.0308,
+    "81+": -0.094
+  },
+  "share_deltas": {
+    "no_terminal_punct_share": 0.0467,
+    "emoji_share": 0.0665,
+    "repeated_emoji_share": 0.0089,
+    "multi_line_share": 0.0162,
+    "blank_line_share": 0.0464,
+    "question_share": -0.0153
+  }
+}
