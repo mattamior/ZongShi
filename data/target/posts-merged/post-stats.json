@@ -1,0 +1,212 @@
+{
+  "input": "data/target/posts-merged/posts.jsonl",
+  "count": 293,
+  "window_utc": {
+    "first": "2026-10-20T11:15:45+00:00",
+    "last": "2026-11-05T17:36:17+00:00",
+    "days": 17,
+    "per_day": {
+      "2026-10-20": 4,
+      "2026-10-21": 8,
+      "2026-10-22": 13,
+      "2026-10-23": 25,
+      "2026-10-24": 21,
+      "2026-10-25": 17,
+      "2026-10-26": 17,
+      "2026-10-27": 14,
+      "2026-10-28": 16,
+      "2026-10-29": 29,
+      "2026-10-30": 18,
+      "2026-10-31": 20,
+      "2026-11-01": 21,
+      "2026-11-02": 18,
+      "2026-11-03": 16,
+      "2026-11-04": 18,
+      "2026-11-05": 18
+    }
+  },
+  "structure": {
+    "length_codepoints": {
+      "median": 41,
+      "p90": 80,
+      "mean": 62.7,
+      "max": 2227
+    },
+    "lines_median": 3,
+    "lines_p90": 5,
+    "multi_line_share": 0.7986,
+    "blank_line_between_share": 0.7679,
+    "question_share": 0.4744,
+    "grok_tag_share": 0.1604,
+    "emoji_share": 0.256,
+    "media_share": 0.1911,
+    "emoji_top": [
+      [
+        "😱",
+        81
+      ],
+      [
+        "😭",
+        20
+      ],
+      [
+        "🤣",
+        16
+      ],
+      [
+        "🇳",
+        15
+      ],
+      [
+        "🇨",
+        13
+      ],
+      [
+        "😡",
+        8
+      ],
+      [
+        "🙏",
+        7
+      ],
+      [
+        "😋",
+        5
+      ]
+    ]
+  },
+  "openers": [
+    {
+      "opener": "其他",
+      "count": 160,
+      "views_median": 2408,
+      "likes_median": 8
+    },
+    {
+      "opener": "卧槽系",
+      "count": 47,
+      "views_median": 5617,
+      "likes_median": 10
+    },
+    {
+      "opener": "不懂就问",
+      "count": 32,
+      "views_median": 2521,
+      "likes_median": 8
+    },
+    {
+      "opener": "话题式（问句开头）",
+      "count": 29,
+      "views_median": 2947,
+      "likes_median": 9
+    },
+    {
+      "opener": "说个冷知识/事实",
+      "count": 13,
+      "views_median": 3198,
+      "likes_median": 13
+    },
+    {
+      "opener": "我很好奇",
+      "count": 9,
+      "views_median": 2181,
+      "likes_median": 11
+    },
+    {
+      "opener": "插播/说句实话",
+      "count": 3,
+      "views_median": 14167,
+      "likes_median": 36
+    }
+  ],
+  "topics_heuristic": {
+    "日常/其他": 126,
+    "时政/社会": 121,
+    "AI/科技": 20,
+    "娱乐/八卦": 20,
+    "币圈": 6
+  },
+  "reach": {
+    "views": {
+      "median": 2784,
+      "p90": 52021,
+      "max": 2098984,
+      "sum": 11403969
+    },
+    "likes": {
+      "median": 9,
+      "p90": 91,
+      "max": 23521
+    },
+    "replies": {
+      "median": 8,
+      "p90": 65
+    },
+    "top_by_views": [
+      {
+        "id": "2115630916232208595",
+        "views": 2098984,
+        "likes": 4353,
+        "text": "卧槽！天塌了！！ /  / 亚马尔和费尔南迪斯跳出来声援姆巴佩 /  / 皇马，巴萨和曼联同时辱华😱😱 /  / 这下事大了，外交部该怎么处理？ /  / 五大"
+      },
+      {
+        "id": "2117260213082562684",
+        "views": 909729,
+        "likes": 224,
+        "text": "卧槽！卧槽！卧槽！！ /  / 原来杨幂和LKW离婚 /  / 是因为杨幂天天被XTF内设啊！ /  / 天塌了啊！😭😭"
+      },
+      {
+        "id": "2115058177494376954",
+        "views": 666689,
+        "likes": 23521,
+        "text": "疫情初期，姆巴佩曾公开为中国加油，大巴黎全队也穿上印有“中国加油”的球衣。那时候中国正面临疫情冲击，不是什么商业活动，更不是为了讨好中国市场的热闹场合，他甚至因"
+      },
+      {
+        "id": "2116112576073662918",
+        "views": 601304,
+        "likes": 3419,
+        "text": "有人发了“习惯了近来平平淡淡的生活”，导致微信被封，之后被叫到派出所。警察听完都没绷住说不信，然后他当场发了个第二天微信也被封了。"
+      },
+      {
+        "id": "2116418431826415738",
+        "views": 593919,
+        "likes": 5640,
+        "text": "我他妈才知道蔡英文年轻时长这样😱妥妥爽文女主啊😱"
+      }
+    ]
+  },
+  "cadence": {
+    "posts_per_hour": 0.75,
+    "gap_median_s": 2387,
+    "gap_p90_s": 9490,
+    "under_10min_share": 0.0068
+  },
+  "hour_of_day_utc8": {
+    "0": 9,
+    "1": 9,
+    "2": 6,
+    "3": 1,
+    "7": 2,
+    "8": 3,
+    "9": 8,
+    "10": 12,
+    "11": 14,
+    "12": 15,
+    "13": 19,
+    "14": 19,
+    "15": 18,
+    "16": 20,
+    "17": 28,
+    "18": 20,
+    "19": 16,
+    "20": 20,
+    "21": 21,
+    "22": 17,
+    "23": 16
+  },
+  "notes": [
+    "Input must contain own top-level posts only; reply rows and reposts are excluded upstream.",
+    "Topic shares use keyword patterns and will double-count/over-assign; treat as directional.",
+    "Views/likes are point-in-time values from the capture, not lifetime totals."
+  ]
+}

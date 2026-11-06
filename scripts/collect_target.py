@@ -101,6 +101,8 @@ def main() -> None:
     parser.add_argument("--profile-ref", default=f"id:{ACCOUNT_ID}")
     parser.add_argument("--resume", action="store_true", help="continue from source/progress.json")
     parser.add_argument("--sleep", type=float, default=1.2, help="seconds between page requests")
+    parser.add_argument("--with-replies", type=int, default=1, choices=(0, 1),
+                        help="1: replies+posts (parents inflate rows); 0: posts+reposts, no parents")
     parser.add_argument("--max-pages", type=int, default=MAX_PAGES, help="safety cap on page requests")
     args = parser.parse_args()
 
@@ -148,7 +150,7 @@ def main() -> None:
         if page_count >= args.max_pages:
             termination_reason = "page_limit_reached"
             break
-        query = {"count": PAGE_SIZE, "with_replies": "1"}
+        query = {"count": PAGE_SIZE, "with_replies": str(args.with_replies)}
         if cursor is not None:
             query["cursor"] = cursor
         url = f"{BASE_URL}/{profile_ref}/statuses?{urllib.parse.urlencode(query)}"
@@ -221,17 +223,19 @@ def main() -> None:
             timeline[status_id] = status
 
     authored = []
-    reposts = 0
+    reposted = []
     for status in timeline.values():
         author = status.get("author")
         if not isinstance(author, dict):
             continue
+        if status.get("reposted_by") is not None:
+            if str((status["reposted_by"] or {}).get("id")) == ACCOUNT_ID:
+                reposted.append(status)
+            continue
         if str(author.get("id")) != ACCOUNT_ID:
             continue
-        if status.get("reposted_by") is not None:
-            reposts += 1
-            continue
         authored.append(status)
+    reposts = len(reposted)
     authored.sort(key=lambda item: int(item.get("created_timestamp") or 0))
 
     replies = [item for item in authored if item.get("replying_to")]
@@ -245,6 +249,7 @@ def main() -> None:
     dump_jsonl(output_dir / "authored.jsonl", authored)
     dump_jsonl(output_dir / "replies.jsonl", replies)
     dump_jsonl(output_dir / "originals.jsonl", originals)
+    dump_jsonl(output_dir / "reposts.jsonl", reposted)
 
     timestamps = [int(item["created_timestamp"]) for item in authored if item.get("created_timestamp")]
     collection = {
@@ -261,7 +266,8 @@ def main() -> None:
         "source": {
             "provider": "FxTwitter public API",
             "endpoint": f"{BASE_URL}/{profile_ref}/statuses",
-            "parameters": {"count": PAGE_SIZE, "with_replies": "1", "profile_ref": profile_ref},
+            "parameters": {"count": PAGE_SIZE, "with_replies": str(args.with_replies), "profile_ref": profile_ref},
+            "row_semantics": "with_replies=1 embeds the replied-to parent post as an extra row, so each reply consumes two rows; with_replies=0 returns posts plus reposts and no parents.",
             "client_authentication": "none; no cookies, tokens, or API keys are sent",
             "raw_pages": "source/pages/page-*.json",
             "progress": "source/progress.json",
