@@ -53,6 +53,8 @@
 | `data/growth/ledger.jsonl` | 动作台账（2 条脚本点赞；另有 1 条手工测试点赞未入账） | — |
 | `scripts/match_published.py` | 把已发帖子对回稿件，反推排期 | `python3 scripts/match_published.py --window-id <id> --tab 1 --refresh` |
 | `data/scheduled/published.jsonl` | 已发布台账：tweet_id / 时刻 / 对应稿件 / 相似度 / 是否被改过 | 同上 |
+| `scripts/collect_metrics.py` | 效果回收：每条帖子点赞/回复/转推 + 账号粉丝快照，追加式快照可对比增量 | `python3 scripts/collect_metrics.py --window-id <id> --tab 1 --compare` |
+| `data/metrics/snapshots.jsonl` | 每次回收一份快照（账号 + 各帖互动），跨天对比看涨粉 | 同上 |
 
 ## 技术事实（踩过的坑，务必先读）
 
@@ -93,10 +95,10 @@
 
 ## 未决问题
 
-1. 蓝V 账号改名/改 bio 403，原因未定位（疑似风控，未验证）。
-2. 效果回收未做：这是全项目第一次有真实数据（展示、点赞、涨粉），还没采集。
-3. `data/growth/ledger.jsonl` 只有 2 条脚本点赞记录，另 1 条手工测试点赞（@ZeroMarginal）未入账。
-4. Principal 会**改稿后再发**：已发的 d03 中间插了一句「这是为什么？」，d01、s21 前面补了 `@grok`。台账记录了相似度与 `edited` 标记，归因时按「稿件 + 改动」看，不要把功劳全算给原稿。
+1. Principal 会**改稿后再发**：已发的 d03 中间插了一句「这是为什么？」，d01、s21 前面补了 `@grok`。台账记录了相似度与 `edited` 标记，归因时按「稿件 + 改动」看，不要把功劳全算给原稿。
+2. **效果回收的限制**：`api.fxtwitter.com` 给点赞/回复/转推，但**不返回查看数**；X 网页端也不再在帖子页显示查看数，要看曝光只能开 X 自带的 analytics。
+3. **已发帖只看到首屏 4 条**：隐藏标签页不触发翻页；直连 GraphQL `UserTweets` 抓该号只回了 2 条（2026-11-06 实测，原因未查）。台账目前是「首屏可见的帖子」，不是全量。
+4. 账号在涨：交接前 34 粉 / 82 关注，两小时后 51 粉 / 89 关注（Principal 手动操作 + 已发帖）。后续看增量用 `collect_metrics.py --compare`。
 
 ## 接管第一步（建议顺序）
 

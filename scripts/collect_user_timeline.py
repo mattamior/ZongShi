@@ -221,8 +221,15 @@ def main() -> int:
     parser.add_argument("--delay", type=float, default=8.0, help="每页之后的等待秒数")
     parser.add_argument("--max-pages", type=int, default=200)
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--handle", default=None)
+    parser.add_argument("--user-id", default=None)
     parser.add_argument("--stop-before", default="2026-09-30", help="抓到这一天之前就停")
     args = parser.parse_args()
+    global HANDLE, USER_ID
+    if args.handle:
+        HANDLE = args.handle
+    if args.user_id:
+        USER_ID = args.user_id
 
     if sys.platform != "darwin":
         raise SystemExit("只能在 macOS 上驱动 Google Chrome")
