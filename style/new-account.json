@@ -1,9 +1,9 @@
 {
   "account": {
     "display_name": "lapplax",
-    "handle": "lapplax",
+    "handle": "MattDjj",
     "bio": "share big things for real",
-    "status": "已开号并开通蓝 V（Principal 2026-11-06 告知）；名字与 bio 当前不可修改，原计划 ZongShi（互～）/「AI 弄潮儿」作废",
+    "status": "2026-11-06 历史快照（HANDOVER.md 与 published.jsonl）：昵称 lapplax，handle @MattDjj，已开通蓝 V；改名与 bio 曾返回 403，原计划 ZongShi（互～）/「AI 弄潮儿」作废。本次未在线复测；交接未完成，周一 2026-11-09 继续（Principal 11-07 确认）",
     "planned_but_unusable": {
       "display_name": "ZongShi（互～）",
       "bio": "AI 弄潮儿"
@@ -16,14 +16,14 @@
       "value": null,
       "status": "已失效",
       "role": "原计划用「（互～）」把主页访问转成回关承诺（对标实测 85% 互关）",
-      "why_lost": "蓝 V 账号当前不能改名，昵称已是 lapplax，没有后缀位",
-      "workaround": "研究阶段不做发送，暂不补；若后续要补，只能在置顶帖或主页封面里表达，不进昵称"
+      "why_lost": "11-06 改名曾返回 403，昵称为 lapplax；本次未复测能否修改",
+      "workaround": "原互关信号方案已作废，不作为当前待执行项；是否调整主页展示需另行决定"
     },
     "one_line_bio": {
       "value": "share big things for real",
-      "role": "现状，不可改。语义偏「讲真的大事」，比原计划「AI 弄潮儿」更宽，也更偏时政/大事",
+      "role": "11-06 历史 bio，修改曾返回 403；本次未复测。语义偏「讲真的大事」，比原计划「AI 弄潮儿」更宽，也更偏时政/大事",
       "check": "仍不含学历 / 执业 / 机构 / 分数 / 收益数字",
-      "content_implication": "bio 承诺 big things，日常琐事占比不宜过高；建议时政/大事与 AI 略加权，日常降到约 35%"
+      "content_implication": "选题不由 bio 推导；沿用已定的时政 / 日常评论方向，不从简介额外推导配比"
     },
     "fixed_self_label": {
       "value": null,
@@ -56,7 +56,7 @@
     "fallback_when_asked": "「不是专业的，随口一说」——降级，不编细节"
   },
   "principal_manual": [
-    "头像：仍由 Principal 手动确定（名字与 bio 已不可改）",
+    "头像：仍由 Principal 手动确定（11-06 改名与 bio 曾返回 403，未在线复测）",
     "若蓝 V 后续允许改名，再评估是否加「（互～）」"
   ]
 }

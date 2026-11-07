@@ -1,25 +1,50 @@
-# ZongShi — 对标 @FKFKFKFKFKTB 的账号风格复刻（研究阶段）
+# ZongShi — X 账号风格研究与内容工作台
 
-本仓库研究 X 账号 [@FKFKFKFKFKTB](https://x.com/FKFKFKFKFKTB)（高水水（互～））的**发帖**风格，产出可复算的规范与生成提示词。回复不进入规范。实现路径参考 `~/Code/lab/mt.ai`（`@mattamior` 的采集 → 规范 → 检索增强生成 → 发送闭环），但**当前只做研究段**：采集、分析、规范、自评；不接账号、不发布。
+本仓库研究 X 账号 [@FKFKFKFKFKTB](https://x.com/FKFKFKFKFKTB)（高水水（互～））的**发帖**风格，产出可复算的规范、生成提示词与稿件，并保留真实账号的发布匹配、互动和指标回收工具。回复语料只作背景，不进入发帖规范。
+
+## 当前状态（2026-11-07 同步）
+
+- 研究主线 P0–P2 已完成：可取得的原创帖语料共 **298 条**，覆盖 2026-10-20 至 11-06；已产出规范与自评样稿。账号更早的原创帖未取得，已停止追补，不宣称覆盖全部历史。
+- 已有真实账号的内容与台账：2026-11-06 交接记录中的昵称为 **lapplax**、handle 为 **@MattDjj**；原计划 `ZongShi（互～） / AI 弄潮儿` 已作废。账号资料、指标及接口可用性均为历史快照，本次未在线复测。
+- 目标是将该号的发帖、互动与增长交由 **mt.ai** 接管；内容方向已定为**时政 / 日常评论**，增长为首要目的。
+- **交接尚未完成，周一（2026-11-09）继续**（用户 2026-11-07 确认）。接管说明见 [HANDOVER.md](HANDOVER.md)。现有脚本和历史动作记录不能视为接管已完成或当前自动化正在运行。
 
 ## 当前产物
 
-- [PLAN.md](PLAN.md)：方案主体。目标账号风格实测（§1）、复刻边界（§2）、架构（§3）、分阶段（§4）、参数（§5）、验收（§6）、风险（§7）、决策记录（§8）。
-- [STYLE.md](STYLE.md)：帖子风格结论——293 条原创帖，2026-10-20 至 11-05。
-- [style/target-style.json](style/target-style.json)：机器可读规范（硬规则、语域菜单、真实例句、指标、题材配比）。
-- [style/prompt.md](style/prompt.md)：可直接复制的提示词（回复 + 原创）。
-- [style/new-account.json](style/new-account.json)：新号接口人设（ZongShi（互～）/ AI 弄潮儿）。
-- [data/target/posts-merged/posts.jsonl](data/target/posts-merged/posts.jsonl)：合并后的 293 条原创帖（去重），含 `post-stats.json`。
-- [data/target/20261105T-posts/](data/target/20261105T-posts/)：纯帖子路由原始页（278 条，2026-10-20 起）。
-- [data/target/20261105T1052Z/](data/target/20261105T1052Z/)：回复路由全量抓取，用于补齐 10-27 之后的原创与背景。
-- 统计复算：`python3 scripts/analyze_posts.py data/target/posts-merged/posts.jsonl`。
+| 产物 | 用途 |
+|---|---|
+| [STYLE.md](STYLE.md)、[style/target-style.json](style/target-style.json) | 298 条原创帖的风格结论、机器可读规则与指标 |
+| [style/prompt.md](style/prompt.md) | 帖子生成提示词与配比自检要求 |
+| [style/new-account.json](style/new-account.json) | 账号接口资料、已作废的人设方案与身份边界 |
+| [data/target/posts-merged/posts.jsonl](data/target/posts-merged/posts.jsonl) | 去重后的 298 条原创帖；同目录保留 `post-stats.json` |
+| [data/target/20261105T-posts/](data/target/20261105T-posts/)、[data/target/20261105T1052Z/](data/target/20261105T1052Z/)、[data/target/timeline-api/](data/target/timeline-api/) | 镜像与登录态时间线采集留档；均有覆盖边界 |
+| [data/eval/](data/eval/)、[guard/banned.md](guard/banned.md)、[guard/check_text.py](guard/check_text.py) | 三批样稿、自评报告与出稿前硬拦截 |
+| [data/drafts/](data/drafts/) | 稿件库，含 11 月 7–8 日的 16 条预写稿；稿件日期不证明已排期或已发布 |
+| [scripts/fetch_news.py](scripts/fetch_news.py) | 手动获取当日热榜，为时事稿保留来源 |
+| [scripts/match_published.py](scripts/match_published.py)、[data/scheduled/published.jsonl](data/scheduled/published.jsonl) | 已发帖与稿件匹配；现有台账仅覆盖当时首屏可见的 4 条 |
+| [scripts/collect_metrics.py](scripts/collect_metrics.py)、[data/metrics/snapshots.jsonl](data/metrics/snapshots.jsonl) | 帖子互动与账号指标历史快照；查看数可能缺失 |
+| [scripts/engage.py](scripts/engage.py)、[data/growth/](data/growth/) | 已有搜索扫描、点赞、关注工具和历史台账；回关工具 `follow_back.py` 已废弃，勿用 |
+| [HANDOVER.md](HANDOVER.md) | mt.ai 接管说明、历史技术限制与未决问题 |
+| [PLAN.md](PLAN.md) | 当前进度摘要与早期方案；历史回复策略、配额不作为当前执行参数 |
 
-## 已定边界（摘要）
+## 本地复核
 
-- 争议内容按对标账号的**处理手法**复刻（提问包装 / 反差并置 / 骂公敌 / 热搜跟评），不按它的**具体断言**复刻；无来源的争议帖只写提问，不写事实。
-- 长文体裁（"14 天上岸"复盘）整类延后，等本号自己跑出数据再解禁。
-- 人设只做接口层（昵称、简介、固定自称），不做身份层（学历、战绩、机构）。
-- 发送段（`send.py` / `record_sent.py` / `metrics.py`）后置，研究阶段不建。
+以下命令只做本地统计与文本检查，不触达账号；检查通过不代表事实已核实或发布效果已验证。
+
+```bash
+python3 scripts/analyze_posts.py data/target/posts-merged/posts.jsonl
+python3 guard/check_text.py --file data/drafts/2026-11-07_08.jsonl
+```
+
+批量出稿后另用 `scripts/analyze_gap.py` 对照语料检查分布，调用方式见脚本头。
+
+## 已定边界
+
+- 借用表达结构，不复制对标账号的具体事件和断言；争议内容须有公开来源，无来源不写事实断言。
+- 原创正文 ≤90 字、非空行 ≤6 行；不写依赖配图才成立的内容；来源保存在稿件元数据中。
+- 长文复盘体裁继续延后；不编造学历、战绩、机构或个人经历，不做固定自称。
+- 选题不由简介推导；内容方向沿用已定的时政 / 日常评论。
+- 本仓库未建设完整自动发送闭环，接管优先复用 mt.ai；继续运营前核对账号、授权、写权限与台账，避免重发。文档同步不启动发布、互动或资料修改。
 
 ## Agnir Project Instructions
 
