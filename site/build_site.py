@@ -77,7 +77,7 @@ def gather() -> list[dict]:
             text = r["text"]
             out.append({
                 "id": r["id"], "date": date_of(path.name, r),
-                "account": r.get("account", "—"), "slot": r.get("slot", "—"),
+                "slot": r.get("slot", "—"),
                 "origin": origin, "tag": tag_for(r.get("topic", ""), r["id"]),
                 "type": "热点跟评" if r.get("claim") == "assertion" else "日常观察",
                 "mode": "问句" if ("？" in text or "?" in text) else "陈述句",

@@ -260,6 +260,8 @@ $('#autofill').addEventListener('click', () => {
 
 const rowsForSave = () => POSTS.filter(p => scoreOf(p.id) !== null).map(p => ({ id: p.id, score: scoreOf(p.id) }));
 
+// 只有 site/serve.py 提供 POST /save；静态托管（Cloudflare Pages）上隐藏，避免点了报 404
+if (!['127.0.0.1', 'localhost'].includes(location.hostname)) $('#save').hidden = true;
 $('#save').addEventListener('click', async () => {
   const rows = rowsForSave();
   if (!rows.length) { toast('还没有评分', true); return; }

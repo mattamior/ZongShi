@@ -26,5 +26,8 @@
 
 - 2026-11-07：按仓库产物与 Principal 最新指示修正研究阶段、账号、人设、覆盖边界及下一步；证据见 `.agnir/evidence/2026-11-07-doc-sync.md`。
 - 2026-11-09：仓库同步至 `95b83d6`；连续性状态与 `HANDOVER.md` 移除机器专属路径，改为“运行时仓库根”，证据文件保留当时路径不改写。
-- 2026-11-09：日更口径定为「每号每小时 4 条」——两号 192 条/天、96 个 15 分钟位、384 条候选；已产出 `data/drafts/2026-11-09-batch.{jsonl,md}`（guard 0 拦截，全挂 `@grok`）。另有 Principal 选定的 5 条与 15 条备选。未发布、未排期、未操作账号。 另有审稿站：`site/index.html` 覆盖全部历史稿件 430 条（四态、标签与出处、新闻配图、顶部图表、导入导出，旧键已迁移）；`site/target.html` 给对标账号 298 条打 0–10 分，`scripts/style_priority.py` 把评分转成起草优先参考清单。`site/plan_dedupe.py` 标出 19 条逐字重复并默认隐藏。
+- 2026-11-09：审稿与评分落地——Principal 在审稿站标记后「保存到仓库」：`data/drafts/review.json` 430 条（已用 57 / 重复 24 / 废弃 349），`data/eval/target-ratings.json` 298 条（>4 分 61）。`scripts/style_priority.py` 按人工评分重算 `data/eval/target-priority.json`（scored 298 / kept 61）；画像改为只统计 ≤90 字帖（对标账号 300+ 字爆料长文不进基准，p90 由 256 降到 68）。同日 18:36 Principal 取消分号，稿件不再标 account、按单号频率出候选、自选，见 decisions。
+- 2026-11-09：候选补充——`data/drafts/2026-11-09-r2.{jsonl,md}` 24 条（晚间 18:00–23:45）、`r3` 100 条（11-09 19:00 → 11-10 19:45；社会 25 / 时政 11 / 民生 44 = 80%），均由 `data/eval/build_11-09_r2.py` / `build_11-09_r3.py` 生成，guard 0 拦截、全挂 `@grok`；热榜快照留档 `data/news/2026-11-09-1804.jsonl`、`-morning.jsonl`。
+- 2026-11-09：审稿站上线 Cloudflare Pages（项目 `zongshi-review`，自定义域 `https://zs.lapplax.com`）；页面去掉账号列与筛选，非 localhost 隐藏「保存到仓库」，静态包由 `site/build_dist.py` 生成并带 `X-Robots-Tag: noindex`。线上与本地构建哈希一致；手机端布局、线上导出回传闭环未验证。
+- 审稿站现有 554 条（11-06/07/08/09/10 五个日期），`site/target.html` 298 条评分，`site/plan_dedupe.py` 预置 19 条逐字重复。
 - 未在线复测账号、接口、mt.ai 接管状态，未运行采集、互动、发送或资料修改。

@@ -28,7 +28,6 @@
   <div class="toolbar">
     <input type="search" id="q" placeholder="搜正文 / 编号 / 来源">
     <select id="f-date"><option value="">全部日期</option></select>
-    <select id="f-acc"><option value="">全部账号</option><option value="A">号 A</option><option value="B">号 B</option></select>
     <select id="f-state"><option value="">全部状态</option><option value="pending">未处理</option><option value="used">已用</option><option value="rejected">废弃</option><option value="duplicate">重复</option><option value="edited">已改</option></select>
     <select id="f-origin"><option value="">全部来源</option><option value="选定">选定</option><option value="备选">备选</option><option value="池">池</option></select>
     <select id="f-tag"><option value="">全部题材</option></select>
@@ -240,8 +239,7 @@ function buildCard(p) {
 
   const head = el('div', 'head');
   const badge = el('span', 'badge', p.id);
-  const acc = el('span', 'badge ' + (p.account === 'B' ? 'b' : 'a'), p.account === 'B' ? '号 B' : (p.account === 'A' ? '号 A' : '—'));
-  head.append(badge, acc);
+  head.append(badge);
   const charsBadge = el('span', 'badge', (p.chars || p.text.length) + ' 字');
   head.append(el('span', 'badge', p.slot), el('span', 'badge', p.origin), el('span', 'badge t', p.tag),
     el('span', 'badge', p.type), el('span', 'badge', p.mode), charsBadge);
@@ -366,7 +364,7 @@ function buildCard(p) {
 /* ---------- 过滤 ---------- */
 function applyFilter() {
   const q = $('#q').value.trim().toLowerCase();
-  const date = $('#f-date').value, acc = $('#f-acc').value, stt = $('#f-state').value;
+  const date = $('#f-date').value, stt = $('#f-state').value;
   const origin = $('#f-origin').value, tag = $('#f-tag').value, hour = $('#f-hour').value;
   const hideDup = $('#hide-dup').checked;
   let shown = 0;
@@ -377,7 +375,6 @@ function applyFilter() {
     if (q && !(p.text.toLowerCase().includes(q) || p.id.includes(q) || (p.source_title || '').toLowerCase().includes(q))) ok = false;
     if (ok && hideDup && stt !== 'duplicate' && cls === 'dup') ok = false;
     if (ok && date && p.date !== date) ok = false;
-    if (ok && acc && p.account !== acc) ok = false;
     if (ok && origin && p.origin !== origin) ok = false;
     if (ok && tag && p.tag !== tag) ok = false;
     if (ok && hour && !(p.slot || '').startsWith(hour)) ok = false;
@@ -413,7 +410,7 @@ dates.forEach(d => {
   const o = el('option', null, h + ' 时'); o.value = h + ':'; $('#f-hour').append(o);
 });
 
-['q', 'f-date', 'f-acc', 'f-state', 'f-origin', 'f-tag', 'f-hour', 'hide-dup'].forEach(id => {
+['q', 'f-date', 'f-state', 'f-origin', 'f-tag', 'f-hour', 'hide-dup'].forEach(id => {
   $('#' + id).addEventListener('input', applyFilter);
 });
 
@@ -441,6 +438,8 @@ $('#export').addEventListener('click', () => {
   toast(`已导出 ${out.length} 条`);
 });
 
+// 只有 site/serve.py 提供 POST /save；静态托管（Cloudflare Pages）上隐藏，避免点了报 404
+if (!['127.0.0.1', 'localhost'].includes(location.hostname)) $('#save').hidden = true;
 $('#save').addEventListener('click', async () => {
   const out = POSTS.map(p => {
     const r = st[p.id] || {};

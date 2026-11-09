@@ -48,15 +48,19 @@ python3 site/plan_dedupe.py                # 按正文去重：逐字或几乎�
 python3 site/build_site.py                 # 读 data/drafts/*.jsonl，生成 site/index.html（数据内嵌）
 python3 site/serve.py 8777                  # 静态服务 + POST /save（页面上的「保存到仓库」直接写文件）
 # 打开 http://127.0.0.1:8777/index.html
+python3 site/build_dist.py                 # 打包 site/dist（页面 + 样式 + 配图 + noindex 头）
+npx wrangler pages deploy site/dist --project-name zongshi-review
+# 线上 https://zs.lapplax.com（自定义域）＝ https://zongshi-review.pages.dev（Pages 项目 zongshi-review，生产分支 main）
 ```
 
 - 顶部导航在「稿池 / 对标评分」之间切换；工具栏单行、图表独立成行不吸顶，卡片区与图表同宽（1180px）。
 - 覆盖 `data/drafts/*.jsonl` 里所有日期，可用「全部日期」筛选；顶部四张图是按状态/日期/题材/字数统计，标完即时更新。
 - 四颗按钮对应四种结论：**复制 = 合格（自动标记已用）**、**重复 = 与已发内容撞车**、**废弃 = 不合格**、**编辑 = 优化（就地改完保存）**。
-- 每张卡显示编号、账号、时段、来源（选定/备选/池）、题材、类型、问句/陈述、字数，以及出处标题和原文链接。
+- 每张卡显示编号、时段、来源（选定/备选/池）、题材、类型、问句/陈述、字数，以及出处标题和原文链接；稿件不分账号（2026-11-09 起取消号 A/号 B 分配）。
 - 单条想指定配图：在 `data/drafts/image_overrides.json` 里加 `"<id>": {"q": "搜索关键词", "credit": "百度图片"}`（也可用 `url` 钉死），再跑 `fetch_images.py`。
 - 配图是新闻图：先取原文 `og:image`，取不到用图片搜索兜底，仍没有就不配图（日常观察类本来没有）。图片放正文右侧、点击看大图，图下标注「原文 / 百度图片（非原文配图）」；**「复制图片」与正文「复制」是两颗独立按钮**。
 - 状态（已用/废弃/改动/配图）存在浏览器 localStorage；点「保存到仓库」直接把 `data/drafts/review.json` 写进仓库（需要 `site/serve.py`），也可「导出」下载。
+- 部署到 Cloudflare Pages 后页面同样能标状态，但只存在该浏览器的 localStorage：`POST /save` 只有本地 `serve.py` 提供，线上按钮自动隐藏；线上标的改动用「导出」下载 JSON，再放回 `data/drafts/review.json` / `data/eval/target-ratings.json`。线上带 `X-Robots-Tag: noindex`，但知道 URL 的人仍可打开。
 - 快捷键：`j`/`k` 切换、`c` 复制、`d` 重复、`x` 废弃、`e` 编辑。
 - 顶部「隐藏重复」默认勾选：`plan_dedupe.py` 把正文逐字/近似重复的帖子（优先留选定、备选，其次按时间）预置为「重复」并隐藏；同主题换角度的帖子不算重复。取消勾选或把状态筛成「重复」才看得到。
 - 必须用 http 打开：`file://` 下浏览器不给剪贴板权限，复制会失败。
@@ -66,7 +70,7 @@ python3 site/serve.py 8777                  # 静态服务 + POST /save（页面
 - 298 条原创帖逐条打 0–10 分，状态存 `localStorage: zs-target-ratings`，可导出 `target-ratings.json`。
 - 没耐心逐条打时点「按展示补分」：只补未评分的，>10000 展示记 5 分、1000–10000 记 4 分、≤1000 记 1 分；已评的不动。也可以把导出文件给我，跑 `python3 scripts/fill_ratings.py <导出.json>` 服务端合并（结果 `data/eval/target-ratings-filled.json`）。
 - 点「保存到仓库」会把 `data/eval/target-ratings.json` 直接写进仓库（需要 `site/serve.py`）；也可导出后手动放。拿到后，跑 `python3 scripts/style_priority.py data/eval/target-ratings.json`，生成 `data/eval/target-priority.json`：按分数排序的正文 + 高分帖的长度/行数/问句/带图画像。
-- **起草只参考评分 >4 分的帖子**：`python3 scripts/style_priority.py data/eval/target-ratings.json` 默认按 `--min 4` 过滤，输出里的 `ranking` 就是可参考清单；`profile` 用作长度和句式基准。
+- **起草只参考评分 >4 分的帖子**：`python3 scripts/style_priority.py data/eval/target-ratings.json` 默认按 `--min 4` 过滤，输出里的 `ranking` 就是可参考清单；`profile` 用作长度和句式基准，只统计 ≤90 字的帖子（对标账号少数 300+ 字爆料长文不进基准，`profile_n` 是计入条数）。
 
 ## 已定边界
 
