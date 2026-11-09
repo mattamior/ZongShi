@@ -24,6 +24,7 @@
 | [scripts/match_published.py](scripts/match_published.py)、[data/scheduled/published.jsonl](data/scheduled/published.jsonl) | 已发帖与稿件匹配；现有台账仅覆盖当时首屏可见的 4 条 |
 | [scripts/collect_metrics.py](scripts/collect_metrics.py)、[data/metrics/snapshots.jsonl](data/metrics/snapshots.jsonl) | 帖子互动与账号指标历史快照；查看数可能缺失 |
 | [scripts/engage.py](scripts/engage.py)、[data/growth/](data/growth/) | 已有搜索扫描、点赞、关注工具和历史台账；回关工具 `follow_back.py` 已废弃，勿用 |
+| [site/](site/) | 审稿页：把当天稿池渲染成可点击的卡片页（复制/废弃/编辑、标签、出处链接、配图独立复制），状态存在浏览器本地 |
 | [HANDOVER.md](HANDOVER.md) | mt.ai 接管说明、历史技术限制与未决问题 |
 | [PLAN.md](PLAN.md) | 当前进度摘要与早期方案；历史回复策略、配额不作为当前执行参数 |
 
@@ -37,6 +38,21 @@ python3 guard/check_text.py --file data/drafts/2026-11-07_08.jsonl
 ```
 
 批量出稿后另用 `scripts/analyze_gap.py` 对照语料检查分布，调用方式见脚本头。
+
+## 审稿页（site/）
+
+```bash
+python3 site/build_site.py                 # 读 data/drafts/*.jsonl，生成 site/index.html（数据内嵌）
+python3 -m http.server 8777 --directory site
+# 打开 http://127.0.0.1:8777/index.html
+```
+
+- 三颗按钮对应三种结论：**复制 = 合格（自动标记已用）**、**废弃 = 不合格**、**编辑 = 优化（就地改完保存）**。
+- 每张卡显示编号、账号、时段、来源（选定/备选/池）、题材、类型、问句/陈述、字数，以及出处标题和原文链接。
+- 有配图时在正文右侧显示，**「复制图片」与正文「复制」相互独立**；没有配图时不占位，点「＋ 图」可挂本地图片。
+- 状态（已用/废弃/改动/配图）存在浏览器 localStorage，可「导出结果」下载 JSON，或「复制已用文本」一次性拿走。
+- 快捷键：`j`/`k` 切换、`c` 复制、`x` 废弃、`e` 编辑。
+- 必须用 http 打开：`file://` 下浏览器不给剪贴板权限，复制会失败。
 
 ## 已定边界
 

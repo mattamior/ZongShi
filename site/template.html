@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2026-11-09 稿池 · 审稿台</title>
+<style>
+:root{--bg:#0d1117;--card:#161b22;--card2:#1c232c;--line:#2a323d;--fg:#e6edf3;--dim:#8b949e;
+--ok:#3fb950;--no:#f85149;--edit:#d29922;--acc:#58a6ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif}
+header{position:sticky;top:0;z-index:10;background:rgba(13,17,23,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:12px 20px}
+.hrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+h1{font-size:16px;margin:0;font-weight:600;letter-spacing:.2px}
+.counters{display:flex;gap:14px;margin-left:auto;font-size:13px;color:var(--dim)}
+.counters b{color:var(--fg);font-weight:600}
+.counters .u b{color:var(--ok)}.counters .r b{color:var(--no)}.counters .e b{color:var(--edit)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
+button{background:var(--card2);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:5px 11px;font-size:13px;cursor:pointer}
+button:hover{border-color:#3d4856;background:#222b35}
+button.primary{background:#1f6feb;border-color:#1f6feb}
+button.primary:hover{background:#2b7bf5}
+input[type=search],select{background:var(--card2);border:1px solid var(--line);color:var(--fg);border-radius:6px;padding:6px 10px;font-size:13px;min-width:120px}
+input[type=search]{flex:1;min-width:200px}
+main{max-width:1180px;margin:0 auto;padding:18px 20px 80px;display:flex;flex-direction:column;gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;outline:none;transition:border-color .12s,opacity .12s}
+.card:focus{border-color:var(--acc)}
+.card.used{border-color:rgba(63,185,80,.6)}
+.card.rejected{opacity:.42}
+.card.rejected .text{text-decoration:line-through}
+.head{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;font-size:12px;color:var(--dim)}
+.id{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--fg);font-weight:600}
+.badge{border:1px solid var(--line);border-radius:999px;padding:1px 8px;font-size:11.5px;color:var(--dim)}
+.badge.a{color:#79c0ff;border-color:#1f4b7a}
+.badge.b{color:#d2a8ff;border-color:#4b3a6b}
+.badge.t{color:#7ee787;border-color:#2a5b33}
+.state{margin-left:auto;font-size:12px;padding:1px 8px;border-radius:999px;border:1px solid var(--line)}
+.state.used{color:var(--ok);border-color:rgba(63,185,80,.5)}
+.state.rejected{color:var(--no);border-color:rgba(248,81,73,.5)}
+.state.edited{color:var(--edit);border-color:rgba(210,153,34,.5)}
+.body{display:flex;gap:18px;align-items:flex-start}
+.textcol{flex:1;min-width:0}
+.text{white-space:pre-wrap;word-break:break-word;font-size:16px;line-height:1.75}
+.editor{width:100%;min-height:120px;background:#0b0f14;color:var(--fg);border:1px solid var(--acc);border-radius:6px;padding:10px;font:inherit;white-space:pre-wrap;resize:vertical}
+.imgcol{width:220px;flex:0 0 220px;display:flex;flex-direction:column;gap:8px}
+.imgcol[hidden]{display:none}
+.thumb{width:100%;border-radius:8px;border:1px solid var(--line);display:block;background:#0b0f14;max-height:260px;object-fit:cover}
+.thumb[hidden]{display:none}
+.imgbtns{display:flex;gap:6px;flex-wrap:wrap}
+.imgbtns button{font-size:12px;padding:4px 9px}
+.empty{font-size:12px;color:var(--dim);border:1px dashed var(--line);border-radius:8px;padding:18px 10px;text-align:center}
+.srcrow{margin-top:10px;font-size:12.5px;color:var(--dim);display:flex;gap:6px;align-items:baseline;min-height:18px}
+.srcrow a{color:var(--acc);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.srcrow a:hover{text-decoration:underline}
+.actions{display:flex;gap:8px;margin-top:12px}
+.actions button{border-radius:6px}
+.ok{color:var(--ok);border-color:rgba(63,185,80,.45)}
+.ok:hover{background:rgba(63,185,80,.12)}
+.no{color:var(--no);border-color:rgba(248,81,73,.45)}
+.no:hover{background:rgba(248,81,73,.12)}
+.edit{color:var(--edit);border-color:rgba(210,153,34,.45)}
+.edit:hover{background:rgba(210,153,34,.12)}
+#toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#238636;color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .18s}
+#toast.show{opacity:1}
+#toast.err{background:#b62324}
+.kbd{font-size:11.5px;color:var(--dim)}
+@media(max-width:760px){.imgcol{width:130px;flex:0 0 130px}.text{font-size:15px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="hrow">
+    <h1>2026-11-09 稿池 · 审稿台</h1>
+    <span class="kbd">j/k 切换 · c 复制 · x 废弃 · e 编辑</span>
+    <div class="counters">
+      <span>总 <b id="c-total">0</b></span>
+      <span>显示 <b id="c-shown">0</b></span>
+      <span class="u">已用 <b id="c-used">0</b></span>
+      <span class="r">废弃 <b id="c-rej">0</b></span>
+      <span class="e">已改 <b id="c-edit">0</b></span>
+      <span>未处理 <b id="c-pend">0</b></span>
+    </div>
+  </div>
+  <div class="toolbar">
+    <input type="search" id="q" placeholder="搜正文 / 编号 / 来源">
+    <select id="f-acc"><option value="">全部账号</option><option value="A">号 A</option><option value="B">号 B</option></select>
+    <select id="f-state"><option value="">全部状态</option><option value="pending">未处理</option><option value="used">已用</option><option value="rejected">废弃</option><option value="edited">已改</option></select>
+    <select id="f-origin"><option value="">全部来源</option><option value="选定">选定</option><option value="备选">备选</option><option value="池">池</option></select>
+    <select id="f-tag"><option value="">全部题材</option></select>
+    <select id="f-hour"><option value="">全部时段</option></select>
+    <button id="copy-used">复制已用文本</button>
+    <button id="export">导出结果</button>
+    <button id="reset">重置</button>
+  </div>
+</header>
+<main id="list"></main>
+<div id="toast"></div>
+<script>
+const POSTS = __DATA__;
+const KEY = 'zs-review-2026-11-09';
+let st = {};
+try { st = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { st = {}; }
+const save = () => localStorage.setItem(KEY, JSON.stringify(st));
+const $ = (s, r=document) => r.querySelector(s);
+const toast = (msg, err=false) => {
+  const t = $('#toast'); t.textContent = msg; t.className = 'show' + (err ? ' err' : '');
+  clearTimeout(t._h); t._h = setTimeout(() => t.className = '', 1600);
+};
+const rec = id => st[id] || (st[id] = {});
+const currentText = p => (rec(p.id).text ?? p.text);
+const stateName = id => {
+  const r = rec(id);
+  if (r.status === 'used') return ['used','已用'];
+  if (r.status === 'rejected') return ['rejected','废弃'];
+  if (r.text != null) return ['edited','已改'];
+  return ['pending','未处理'];
+};
+
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text != null) e.textContent = text;
+  return e;
+}
+
+function buildCard(p) {
+  const card = el('article', 'card'); card.dataset.id = p.id; card.tabIndex = 0;
+  const head = el('div', 'head');
+  head.append(el('span', 'id', p.id));
+  head.append(el('span', 'badge ' + (p.account === 'A' ? 'a' : 'b'), '号 ' + p.account));
+  head.append(el('span', 'badge', p.slot));
+  head.append(el('span', 'badge', p.origin));
+  head.append(el('span', 'badge t', p.tag));
+  head.append(el('span', 'badge', p.type));
+  head.append(el('span', 'badge', p.mode));
+  const wc = el('span', 'badge', currentText(p).length + ' 字'); head.append(wc);
+  const state = el('span', 'state'); head.append(state);
+  card.append(head);
+
+  const body = el('div', 'body');
+  const textcol = el('div', 'textcol');
+  const text = el('div', 'text', currentText(p));
+  const editor = el('textarea', 'editor'); editor.hidden = true; editor.value = currentText(p);
+  textcol.append(text, editor);
+  body.append(textcol);
+
+  const imgcol = el('div', 'imgcol'); imgcol.hidden = true;
+  const thumb = el('img', 'thumb'); thumb.alt = '配图';
+  const imgbtns = el('div', 'imgbtns');
+  const copyImg = el('button', 'copyimg', '复制图片');
+  const del = el('button', 'delimg', '删图');
+  const file = el('input'); file.type = 'file'; file.accept = 'image/*'; file.hidden = true;
+  imgbtns.append(copyImg, del);
+  imgcol.append(thumb, imgbtns, file);
+  body.append(imgcol);
+  card.append(body);
+
+  const srcrow = el('div', 'srcrow');
+  if (p.source_url) {
+    srcrow.append(el('span', '', '出处'));
+    const a = el('a', '', p.source_title || p.source_url);
+    a.href = p.source_url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+    srcrow.append(a);
+  } else {
+    srcrow.append(el('span', '', '出处：日常观察（无外部来源）'));
+  }
+  card.append(srcrow);
+
+  const actions = el('div', 'actions');
+  const ok = el('button', 'ok', '复制');
+  const no = el('button', 'no', '废弃');
+  const edit = el('button', 'edit', '编辑');
+  const saveBtn = el('button', 'ok', '保存'); saveBtn.hidden = true;
+  const cancel = el('button', '', '取消'); cancel.hidden = true;
+  const pick = el('button', 'pickimg', '＋ 图');
+  actions.append(ok, no, edit, saveBtn, cancel, pick);
+  card.append(actions);
+
+  const refresh = () => {
+    const [cls, label] = stateName(p.id);
+    state.className = 'state ' + cls; state.textContent = label;
+    card.classList.toggle('used', cls === 'used');
+    card.classList.toggle('rejected', cls === 'rejected');
+    text.textContent = currentText(p);
+    wc.textContent = currentText(p).length + ' 字';
+    updateCounters();
+  };
+
+  const setStatus = s => { rec(p.id).status = s; save(); refresh(); };
+
+  const applyImage = dataUrl => {
+    imgcol.hidden = !dataUrl;
+    if (dataUrl) thumb.src = dataUrl;
+    else thumb.removeAttribute('src');
+  };
+
+  ok.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(currentText(p)); toast('已复制，标记为已用'); setStatus('used'); }
+    catch (e) { toast('复制失败：浏览器拒绝了剪贴板权限', true); }
+  });
+  no.addEventListener('click', () => { setStatus('rejected'); toast('已废弃'); });
+  edit.addEventListener('click', () => {
+    editor.value = currentText(p); editor.hidden = false; text.hidden = true;
+    edit.hidden = true; saveBtn.hidden = false; cancel.hidden = false; editor.focus();
+  });
+  saveBtn.addEventListener('click', () => {
+    const v = editor.value.replace(/\s+$/,'');
+    if (!v) { toast('正文不能为空', true); return; }
+    rec(p.id).text = v; save();
+    editor.hidden = true; text.hidden = false;
+    edit.hidden = false; saveBtn.hidden = true; cancel.hidden = true;
+    refresh(); toast('已保存修改');
+  });
+  cancel.addEventListener('click', () => {
+    editor.hidden = true; text.hidden = false;
+    edit.hidden = false; saveBtn.hidden = true; cancel.hidden = true;
+  });
+
+  pick.addEventListener('click', () => file.click());
+  file.addEventListener('change', () => {
+    const f = file.files[0]; if (!f) return;
+    const r = new FileReader();
+    r.onload = () => { rec(p.id).image = r.result; save(); applyImage(r.result); toast('图片已挂上'); };
+    r.readAsDataURL(f);
+  });
+  del.addEventListener('click', () => { delete rec(p.id).image; save(); applyImage(null); });
+  copyImg.addEventListener('click', async () => {
+    const src = rec(p.id).image || thumb.src;
+    if (!src) return;
+    try {
+      const img = new Image(); img.src = src; await img.decode();
+      const c = document.createElement('canvas'); c.width = img.naturalWidth; c.height = img.naturalHeight;
+      c.getContext('2d').drawImage(img, 0, 0);
+      const blob = await new Promise(res => c.toBlob(res, 'image/png'));
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+      toast('图片已复制');
+    } catch (e) { toast('图片复制失败，可右键另存', true); }
+  });
+
+  applyImage(rec(p.id).image || p.image || null);
+  refresh();
+  return card;
+}
+
+function updateCounters() {
+  let used = 0, rej = 0, ed = 0, pend = 0;
+  for (const p of POSTS) {
+    const [cls] = stateName(p.id);
+    if (cls === 'used') used++; else if (cls === 'rejected') rej++;
+    else if (cls === 'edited') ed++; else pend++;
+  }
+  $('#c-total').textContent = POSTS.length;
+  $('#c-shown').textContent = document.querySelectorAll('.card:not([hidden])').length;
+  $('#c-used').textContent = used;
+  $('#c-rej').textContent = rej; $('#c-edit').textContent = ed; $('#c-pend').textContent = pend;
+}
+
+const tags = [...new Set(POSTS.map(p => p.tag))].sort();
+for (const t of tags) { const o = el('option', '', t); o.value = t; $('#f-tag').append(o); }
+const hours = [...new Set(POSTS.map(p => p.slot.slice(0,2)))].sort();
+for (const h of hours) { const o = el('option', '', h + ' 时'); o.value = h; $('#f-hour').append(o); }
+
+const matches = p => {
+  const q = $('#q').value.trim().toLowerCase();
+  const acc = $('#f-acc').value, stt = $('#f-state').value, tag = $('#f-tag').value, hr = $('#f-hour').value, org = $('#f-origin').value;
+  if (acc && p.account !== acc) return false;
+  if (org && p.origin !== org) return false;
+  if (tag && p.tag !== tag) return false;
+  if (hr && p.slot.slice(0,2) !== hr) return false;
+  if (stt) { const [cls] = stateName(p.id); if (stt === 'edited' ? cls !== 'edited' : cls !== stt) return false; }
+  if (q) {
+    const hay = (p.id + ' ' + currentText(p) + ' ' + (p.source_title || '')).toLowerCase();
+    if (!hay.includes(q)) return false;
+  }
+  return true;
+};
+function applyFilter() {
+  const list = $('#list');
+  let shown = 0;
+  for (const card of list.children) {
+    const p = POSTS.find(x => x.id === card.dataset.id);
+    const ok = matches(p);
+    card.hidden = !ok; if (ok) shown++;
+  }
+  $('#c-shown').textContent = shown;
+}
+['q','f-acc','f-state','f-tag','f-hour','f-origin'].forEach(id => {
+  document.getElementById(id).addEventListener('input', applyFilter);
+});
+
+const list = $('#list');
+const frag = document.createDocumentFragment();
+for (const p of POSTS) frag.append(buildCard(p));
+list.append(frag);
+
+$('#copy-used').addEventListener('click', async () => {
+  const parts = POSTS.filter(p => stateName(p.id)[0] === 'used').map(p => currentText(p));
+  if (!parts.length) { toast('还没有标记为已用的帖子', true); return; }
+  try { await navigator.clipboard.writeText(parts.join('\n\n')); toast(`已复制 ${parts.length} 条`); }
+  catch (e) { toast('复制失败', true); }
+});
+$('#export').addEventListener('click', () => {
+  const out = POSTS.map(p => {
+    const r = rec(p.id);
+    const [cls] = stateName(p.id);
+    return { id: p.id, account: p.account, slot: p.slot, tag: p.tag, state: cls, text: currentText(p), edited: r.text != null, has_image: !!r.image };
+  });
+  const blob = new Blob([JSON.stringify({ date: '2026-11-09', items: out }, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'review-2026-11-09.json'; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  toast('已导出 review-2026-11-09.json');
+});
+$('#reset').addEventListener('click', () => {
+  if (!confirm('清空本地的已用/废弃/修改记录？')) return;
+  st = {}; save(); location.reload();
+});
+
+let cursor = -1;
+const visible = () => [...list.children].filter(c => !c.hidden);
+document.addEventListener('keydown', e => {
+  const t = e.target.tagName;
+  if (t === 'INPUT' || t === 'TEXTAREA' || t === 'SELECT') return;
+  const cards = visible(); if (!cards.length) return;
+  if (e.key === 'j' || e.key === 'k') {
+    cursor = Math.max(0, Math.min(cards.length - 1, cursor + (e.key === 'j' ? 1 : -1)));
+    cards[cursor].focus(); cards[cursor].scrollIntoView({block:'center', behavior:'smooth'});
+  } else if (e.key === 'c') { cards[Math.max(cursor,0)]?.querySelector('.ok').click(); }
+  else if (e.key === 'x') { cards[Math.max(cursor,0)]?.querySelector('.no').click(); }
+  else if (e.key === 'e') { cards[Math.max(cursor,0)]?.querySelector('.edit').click(); }
+});
+updateCounters();
+</script>
+</body>
+</html>
