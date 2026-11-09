@@ -62,6 +62,8 @@ def main() -> None:
     imgjson = ROOT.parent / "data/drafts/images.json"
     if imgjson.exists():
         images = json.loads(imgjson.read_text(encoding="utf-8"))
+    for f in (ROOT / "img").glob("*.jpg"):
+        images.setdefault(f.stem, f"img/{f.name}")
 
     out = []
     for origin, rows in (("选定", selected), ("备选", candidates), ("池", pool)):

@@ -42,7 +42,7 @@ main{max-width:1180px;margin:0 auto;padding:18px 20px 80px;display:flex;flex-dir
 .textcol{flex:1;min-width:0}
 .text{white-space:pre-wrap;word-break:break-word;font-size:16px;line-height:1.75}
 .editor{width:100%;min-height:120px;background:#0b0f14;color:var(--fg);border:1px solid var(--acc);border-radius:6px;padding:10px;font:inherit;white-space:pre-wrap;resize:vertical}
-.imgcol{width:220px;flex:0 0 220px;display:flex;flex-direction:column;gap:8px}
+.imgcol{width:300px;flex:0 0 300px;display:flex;flex-direction:column;gap:8px}
 .imgcol[hidden]{display:none}
 .thumb{width:100%;border-radius:8px;border:1px solid var(--line);display:block;background:#0b0f14;max-height:260px;object-fit:cover}
 .thumb[hidden]{display:none}
@@ -64,7 +64,7 @@ main{max-width:1180px;margin:0 auto;padding:18px 20px 80px;display:flex;flex-dir
 #toast.show{opacity:1}
 #toast.err{background:#b62324}
 .kbd{font-size:11.5px;color:var(--dim)}
-@media(max-width:760px){.imgcol{width:130px;flex:0 0 130px}.text{font-size:15px}}
+@media(max-width:760px){.imgcol{width:140px;flex:0 0 140px}.text{font-size:15px}}
 </style>
 </head>
 <body>
@@ -145,13 +145,12 @@ function buildCard(p) {
   body.append(textcol);
 
   const imgcol = el('div', 'imgcol'); imgcol.hidden = true;
-  const thumb = el('img', 'thumb'); thumb.alt = '配图';
+  const thumb = el('img', 'thumb'); thumb.alt = '配图'; thumb.title = '点击看大图';
   const imgbtns = el('div', 'imgbtns');
   const copyImg = el('button', 'copyimg', '复制图片');
-  const del = el('button', 'delimg', '删图');
-  const file = el('input'); file.type = 'file'; file.accept = 'image/*'; file.hidden = true;
-  imgbtns.append(copyImg, del);
-  imgcol.append(thumb, imgbtns, file);
+  imgbtns.append(copyImg);
+  const thumbLink = el('a'); thumbLink.target = '_blank'; thumbLink.rel = 'noopener'; thumbLink.append(thumb);
+  imgcol.append(thumbLink, imgbtns);
   body.append(imgcol);
   card.append(body);
 
@@ -172,8 +171,7 @@ function buildCard(p) {
   const edit = el('button', 'edit', '编辑');
   const saveBtn = el('button', 'ok', '保存'); saveBtn.hidden = true;
   const cancel = el('button', '', '取消'); cancel.hidden = true;
-  const pick = el('button', 'pickimg', '＋ 图');
-  actions.append(ok, no, edit, saveBtn, cancel, pick);
+  actions.append(ok, no, edit, saveBtn, cancel);
   card.append(actions);
 
   const refresh = () => {
@@ -190,7 +188,7 @@ function buildCard(p) {
 
   const applyImage = dataUrl => {
     imgcol.hidden = !dataUrl;
-    if (dataUrl) thumb.src = dataUrl;
+    if (dataUrl) { thumb.src = dataUrl; thumbLink.href = dataUrl; }
     else thumb.removeAttribute('src');
   };
 
@@ -216,14 +214,6 @@ function buildCard(p) {
     edit.hidden = false; saveBtn.hidden = true; cancel.hidden = true;
   });
 
-  pick.addEventListener('click', () => file.click());
-  file.addEventListener('change', () => {
-    const f = file.files[0]; if (!f) return;
-    const r = new FileReader();
-    r.onload = () => { rec(p.id).image = r.result; save(); applyImage(r.result); toast('图片已挂上'); };
-    r.readAsDataURL(f);
-  });
-  del.addEventListener('click', () => { delete rec(p.id).image; save(); applyImage(null); });
   copyImg.addEventListener('click', async () => {
     const src = rec(p.id).image || thumb.src;
     if (!src) return;

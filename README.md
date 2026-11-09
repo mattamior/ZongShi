@@ -42,6 +42,7 @@ python3 guard/check_text.py --file data/drafts/2026-11-07_08.jsonl
 ## 审稿页（site/）
 
 ```bash
+python3 site/make_cards.py                 # 每条稿子生成一张 1200×675 标题卡到 site/img/
 python3 site/build_site.py                 # 读 data/drafts/*.jsonl，生成 site/index.html（数据内嵌）
 python3 -m http.server 8777 --directory site
 # 打开 http://127.0.0.1:8777/index.html
@@ -49,7 +50,7 @@ python3 -m http.server 8777 --directory site
 
 - 三颗按钮对应三种结论：**复制 = 合格（自动标记已用）**、**废弃 = 不合格**、**编辑 = 优化（就地改完保存）**。
 - 每张卡显示编号、账号、时段、来源（选定/备选/池）、题材、类型、问句/陈述、字数，以及出处标题和原文链接。
-- 有配图时在正文右侧显示，**「复制图片」与正文「复制」相互独立**；没有配图时不占位，点「＋ 图」可挂本地图片。
+- 配图由 `site/make_cards.py` 本地渲染（热榜页面不提供原图），放在正文右侧，点击看大图；**「复制图片」与正文「复制」是两颗独立按钮**，图片按 1200×675 原尺寸进剪贴板。
 - 状态（已用/废弃/改动/配图）存在浏览器 localStorage，可「导出结果」下载 JSON，或「复制已用文本」一次性拿走。
 - 快捷键：`j`/`k` 切换、`c` 复制、`x` 废弃、`e` 编辑。
 - 必须用 http 打开：`file://` 下浏览器不给剪贴板权限，复制会失败。
