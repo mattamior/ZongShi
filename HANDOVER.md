@@ -1,7 +1,7 @@
 # 账号交接：lapplax / @MattDjj → mt.ai
 
-> 交接方：ZongShi 项目（`/Users/jaymini/Code/lab/xcom/ZongShi`，commit `0fbe3ce`）
-> 接收方：mt.ai 项目（`/Users/jaymini/Code/lab/mt.ai`）
+> 交接方：ZongShi 项目（commit `0fbe3ce`）
+> 接收方：mt.ai 项目（原环境 `~/Code/lab/mt.ai`，实际位置按运行时确认）
 > 时间：2026-11-06
 > 作者：ZongShi 项目代理；账号所有者为 Principal
 
@@ -9,7 +9,7 @@
 
 **交接尚未完成，周一（2026-11-09）继续**（Principal 2026-11-07 确认）。内容方向已定为**时政 / 日常评论**。下文账号数据、路径、窗口 ID 和接口结果均为 11-06 原环境记录，本次未在线复测；恢复时应重新定位实际环境，不能直接套用旧窗口 ID。mt.ai 的工具与能力为交接时记录，本次未检查其仓库或运行状态。
 
-当前本机仓库位于 `/Users/jay/Code/lapplax/x-persona/ZongShi`。顶部原交接路径与 commit 保留作历史出处。
+仓库可能在多台机器上克隆编辑，正文不记录机器专属绝对路径；11-06 原环境的路径与 commit 只作历史出处，恢复交接时以运行时仓库根为准。
 
 ## 一句话
 
@@ -122,7 +122,7 @@
 以下是原环境的历史命令与结果，不代表本次重新运行或接管验收。
 
 ```bash
-cd /Users/jaymini/Code/lab/xcom/ZongShi
+cd "$ZONGSHI_ROOT"                      # 替换为运行时仓库根
 git log --oneline -1                     # 0fbe3ce
 python3 guard/check_text.py --file data/drafts/2026-11-06.jsonl   # 检查 10 条，拦截 0 条
 wc -l data/target/posts-merged/posts.jsonl                        # 298

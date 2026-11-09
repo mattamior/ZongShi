@@ -1,7 +1,7 @@
 # Current State
 
 - Project: 研究 X 账号 `@FKFKFKFKFKTB`（高水水（互～），数字 ID `2105258399885844480`）的**发帖**风格，产出规范、提示词与稿件，并为真实账号接管保留工具与台账。回复仅作背景，不进入发帖规范。
-- Authorized Project Entry Point: 本次用户提供的仓库根 `/Users/jay/Code/lapplax/x-persona/ZongShi`；历史 `/Users/jaymini/Code/lab/xcom/ZongShi` 为原执行环境路径，不作为本机发现入口。
+- Authorized Project Entry Point: **运行时传入的仓库根**。同一仓库在多台机器上克隆编辑，连续性状态不记录机器专属绝对路径；证据文件中出现的历史路径只代表当时环境，不作为当前发现入口。
 - Agnir Core/profile: `1.0` / `repository-filesystem/1.0`; project identity `urn:zongshi:project:x-style-replication`; selected lineage `urn:zongshi:lineage:primary`; distribution `v1.0.2`, revision `b5626394ec40a5cb7a28c01892acde07cc0adc8e`。本次未升级或迁移协议。
 - **当前阶段：研究 P0–P2 已完成，真实账号交接未完成；周一（2026-11-09）继续**（Principal 2026-11-07 明确）。11-05 的“仅研究、不接账号”是早期阶段边界；11-06 已形成账号运营交接记录。本次仅同步文档，未操作账号，也未确认 mt.ai 当前运行状态。
 
@@ -20,9 +20,10 @@
 - 目标沿用 `HANDOVER.md`：交给 mt.ai 运营，增长优先，内容方向**时政 / 日常评论**已定，置顶浇友帖是历史。简介不作为选题约束；不做固定自称或虚构身份。
 - 已有工具：`engage.py`（扫描 / 点赞 / 关注）、`match_published.py`（稿件匹配）、`collect_metrics.py`（指标回收）；`follow_back.py` 已废弃。本仓库未建设完整自动发帖闭环，优先复用 mt.ai。脚本存在及历史动作均不证明当前自动化在运行。
 - 已发布台账 `data/scheduled/published.jsonl` 记录当时首屏可见 4 条（置顶帖 + d01 / d03 / s21）；人工改稿使匹配并非原文完全一致，非全量发布清单。最新仓库快照为 11-06 18:33:43 UTC+8：51 粉、89 关注、22 条状态；查看数可能为空或来自首屏，不能视为完整曝光统计。
-- 交接入口 `HANDOVER.md`；旧窗口 ID / 本机路径 / 接口可用性均属于 11-06 原环境记录，周一继续时先定位实际环境与接管状态。不得从旧窗口 ID 推断本机已登录。
+- 交接入口 `HANDOVER.md`；旧窗口 ID / 旧机器路径 / 接口可用性均属于 11-06 原环境记录，继续时先定位实际环境与接管状态。不得从旧窗口 ID 推断当前机器已登录。
 
 ## 本次同步
 
 - 2026-11-07：按仓库产物与 Principal 最新指示修正研究阶段、账号、人设、覆盖边界及下一步；证据见 `.agnir/evidence/2026-11-07-doc-sync.md`。
+- 2026-11-09：仓库同步至 `95b83d6`；连续性状态与 `HANDOVER.md` 移除机器专属路径，改为“运行时仓库根”，证据文件保留当时路径不改写。
 - 未在线复测账号、接口、mt.ai 接管状态，未运行采集、互动、发送或资料修改。
