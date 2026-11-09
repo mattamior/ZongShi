@@ -2,7 +2,7 @@ import json, pathlib
 sel = [json.loads(l) for l in open("data/drafts/2026-11-09.jsonl")]
 cand = [json.loads(l) for l in open("data/drafts/2026-11-09-candidates.jsonl")]
 out = ["# 2026-11-09 稿件", "",
-       "已选 5 条是 Principal 12:14 从 24 条里挑出来的，正文未改；下面 12 条是按这 5 条的手法新写的备选。",
+       f"已选 {len(sel)} 条是 Principal 从 24 条里挑出来的，正文未改；下面 {len(cand)} 条是按这 5 条的手法写的备选（t07 为 Principal 手改稿）。",
        "全部挂 `@grok`，`guard/check_text.py` 0 拦截；热榜来自 `data/news/2026-11-09.jsonl`（11:25 抓取）。**未发布、未排期**。", ""]
 def block(title, rows):
     out.append(f"## {title}")
