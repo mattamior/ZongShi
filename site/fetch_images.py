@@ -66,6 +66,19 @@ def search_image(title: str) -> str | None:
     return None
 
 
+def save_image(src: str, path: pathlib.Path) -> bool:
+    try:
+        blob = get(src)
+        import io
+        im = Image.open(io.BytesIO(blob)).convert("RGB")
+        if im.width > 1000:
+            im = im.resize((1000, round(im.height * 1000 / im.width)), Image.LANCZOS)
+        im.save(path, quality=82, optimize=True)
+        return True
+    except Exception:
+        return False
+
+
 def post_rows() -> list[dict]:
     rows = []
     for name in (f"{DATE}-batch.jsonl", f"{DATE}.jsonl", f"{DATE}-candidates.jsonl"):
@@ -100,22 +113,8 @@ def main() -> None:
         if not src:
             cache[url] = None
             continue
-        try:
-            blob = get(src)
-        except Exception:
-            cache[url] = None
-            continue
-        if len(blob) < 8_000:
-            cache[url] = None
-            continue
         name = f"n{len(cache):03d}.jpg"
-        try:
-            import io
-            im = Image.open(io.BytesIO(blob)).convert("RGB")
-            if im.width > 1000:
-                im = im.resize((1000, round(im.height * 1000 / im.width)), Image.LANCZOS)
-            im.save(out_dir / name, quality=82, optimize=True)
-        except Exception:
+        if not save_image(src, out_dir / name):
             cache[url] = None
             continue
         cache[url] = {"src": f"img/{name}", "origin": origin, "credit": credit}
@@ -125,6 +124,18 @@ def main() -> None:
         hit = cache.get(d.get("source_url"))
         if hit:
             mapping[d["id"]] = hit
+
+    # 单条指定配图：人工给关键词，覆盖按来源匹配的结果
+    overrides = {}
+    ov_json = ROOT.parent / "data/drafts/image_overrides.json"
+    if ov_json.exists():
+        overrides = json.loads(ov_json.read_text(encoding="utf-8"))
+    for pid, spec in overrides.items():
+        src = spec.get("url") or search_image(spec["q"])
+        if not src or not save_image(src, out_dir / f"o_{pid}.jpg"):
+            print(f"  override failed: {pid} {spec['q']}")
+            continue
+        mapping[pid] = {"src": f"img/o_{pid}.jpg", "origin": "search", "credit": spec.get("credit", "百度图片")}
 
     (ROOT.parent / "data/drafts/images.json").write_text(
         json.dumps(mapping, ensure_ascii=False, indent=0), encoding="utf-8")
