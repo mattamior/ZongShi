@@ -1,22 +1,18 @@
 #!/usr/bin/env python3
-"""按主题去重：同一主题只保留 2 条（优先「选定/备选」，再按时间），其余写入 data/drafts/dedup.json。"""
+"""按正文去重：完全一样或几乎一样的帖子只留一条（优先「选定」>「备选」>「池」，再按时间）。
+
+同主题但换了角度的帖子不算重复——那是不同写法，不是重复内容。
+结果写 data/drafts/dedup.json，原稿不动。
+"""
 from __future__ import annotations
 
+import difflib
 import json
 import pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent
 DATE = "2026-11-09"
-KEEP = 2
-
-# 选定/备选没有 topic 字段，手工对到池里的主题码
-TOPIC_OF = {
-    "s11": "T26", "s12": "T13", "s13": "T27", "s15": "T25", "s18": "T24",
-    "t01": "T2", "t02": "T15", "t03": "T17", "t06": "T18", "t07": "T16", "t12": "T3",
-    "u01": "T4", "u02": "T19", "u03": "T20", "u04": "T12", "u05": "T21",
-    "u06": "T23", "u07": "T22", "v01": "T1", "v04": "T28",
-}
-RANK = {"选定": 0, "备选": 1, "池": 2}
+THRESHOLD = 0.92
 
 
 def rows() -> list[dict]:
@@ -30,27 +26,37 @@ def rows() -> list[dict]:
             if line.strip():
                 d = json.loads(line)
                 d["origin"] = origin
-                d["topic"] = d.get("topic") or TOPIC_OF.get(d["id"], d["id"])
                 out.append(d)
+    rank = {"选定": 0, "备选": 1, "池": 2}
+    out.sort(key=lambda r: (rank[r["origin"]], r.get("slot", ""), r.get("variant", 0)))
     return out
 
 
 def main() -> None:
-    groups: dict[str, list[dict]] = {}
+    norm = lambda t: "".join(t.split())
+    kept: list[tuple[str, str]] = []  # (id, normalized text)
+    dup: dict[str, str] = {}
     for r in rows():
-        groups.setdefault(r["topic"], []).append(r)
-
-    dup = {}
-    kept = 0
-    for topic, items in groups.items():
-        items.sort(key=lambda r: (RANK[r["origin"]], r.get("slot", ""), r.get("variant", 0)))
-        for r in items[KEEP:]:
-            dup[r["id"]] = "duplicate"
-        kept += min(KEEP, len(items))
+        text = norm(r["text"])
+        hit = None
+        for kid, ktext in kept:
+            if text == ktext:
+                hit = kid
+                break
+            if abs(len(text) - len(ktext)) < 20 * 2:
+                if difflib.SequenceMatcher(None, text, ktext).ratio() >= THRESHOLD:
+                    hit = kid
+                    break
+        if hit:
+            dup[r["id"]] = hit
+        else:
+            kept.append((r["id"], text))
 
     (ROOT.parent / "data/drafts/dedup.json").write_text(
         json.dumps(dup, ensure_ascii=False, indent=0), encoding="utf-8")
-    print(f"topics={len(groups)} kept={kept} duplicates={len(dup)}")
+    print(f"total={len(kept) + len(dup)} kept={len(kept)} duplicates={len(dup)}")
+    for d, k in list(dup.items())[:8]:
+        print(f"  {d} == {k}")
 
 
 if __name__ == "__main__":
