@@ -43,7 +43,7 @@ add(id="s14", slot="傍晚", template="时政跟评", claim="assertion",
 add(id="s15", slot="傍晚", template="体育提问", claim="assertion",
     text="张本智和又拿冠军\n\n赢球那两嗓子，你们觉得算庆祝还是没礼貌？\n\n@grok", **src("张本智和"))
 add(id="s16", slot="傍晚", template="体育跟评", claim="assertion",
-    text="里夫斯 43 分，湖人五连胜\n\n詹姆斯不在反倒更顺\n\n这算巧合还是玄学？\n\n@grok", **src("里夫斯"))
+    text="里夫斯 43 分，湖人五连胜\n\n这波连胜到底谁带的？\n\n@grok", **src("里夫斯"))
 add(id="s17", slot="傍晚", template="热搜跟评", claim="assertion",
     text="大连主帅被泼一身啤酒，滑倒还光速变脸\n\n赢球泼啤酒，输球泼啥？\n\n@grok", **src("大连主帅被泼啤酒"))
 add(id="s18", slot="晚上", template="时政提问", claim="assertion",
@@ -60,7 +60,7 @@ add(id="s22", slot="晚上", template="数字名单", claim="assertion",
 add(id="s23", slot="晚上", template="AI 跟评", claim="assertion",
     text="大三男生在宿舍手搓 AI 漫剧，一年营收 300 万\n\n评论区已经开始卖课了吧？\n\n@grok", **src("大三男生宿舍手搓"))
 add(id="s24", slot="晚上", template="产业跟评", claim="assertion",
-    text="进博会最火的展区是运动经济\n\n钱包瘪了，跑鞋倒卖爆了\n\n这算消费降级还是消费升级？\n\n@grok", **src("进博会"))
+    text="进博会最火的是运动经济\n\n钱不好赚，运动装备反而卖爆\n\n这算降级还是升级？\n\n@grok", **src("进博会"))
 
 p = pathlib.Path("data/drafts/2026-11-09.jsonl")
 p.write_text("\n".join(json.dumps(d, ensure_ascii=False) for d in D) + "\n", encoding="utf-8")
