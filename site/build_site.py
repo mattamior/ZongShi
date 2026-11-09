@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""把当天稿池渲染成一个可直接双击打开的审稿页（数据内嵌，不依赖 fetch）。"""
+"""把 data/drafts 下所有日期的稿件渲染成一个审稿页（数据内嵌，不依赖 fetch）。"""
 from __future__ import annotations
 
 import json
 import pathlib
+import re
 
 ROOT = pathlib.Path(__file__).resolve().parent
-DATE = "2026-11-09"
 
 TAGS = {
     "T1": "社会", "T2": "商业", "T3": "产业", "T4": "民生", "T5": "体育", "T6": "消费",
@@ -26,7 +26,6 @@ F_TAGS = ["人情", "人情", "教育", "职场", "职场", "就业", "消费", 
           "消费", "消费", "居住", "居住", "市政", "交通", "出行", "消费", "娱乐", "娱乐",
           "消费", "居住", "消费", "通信"]
 
-
 ID_TAGS = {
     "s11": "时政", "s12": "社会", "s13": "城市", "s15": "体育", "s18": "军事",
     "t01": "商业", "t02": "文保", "t03": "社会", "t06": "娱乐", "t07": "历史",
@@ -34,49 +33,55 @@ ID_TAGS = {
     "u05": "科技", "u06": "消费", "u07": "时政", "v01": "社会", "v04": "科技",
 }
 
+ORIGIN_BY_SUFFIX = {"-batch": "池", "-candidates": "备选"}
+
 
 def tag_for(topic: str, pid: str = "") -> str:
     if pid in ID_TAGS:
         return ID_TAGS[pid]
     if topic in TAGS:
         return TAGS[topic]
-    if topic.startswith("E"):
+    if topic.startswith("E") and topic[2:].isdigit():
         return E_TAGS[int(topic[2:]) - 1]
-    if topic.startswith("F"):
+    if topic.startswith("F") and topic[2:].isdigit():
         return F_TAGS[int(topic[2:]) - 1]
     return "其他"
 
 
-def load(path: str, origin: str) -> list[dict]:
-    p = ROOT.parent / path
-    if not p.exists():
-        return []
-    return [json.loads(line) for line in p.read_text(encoding="utf-8").splitlines() if line.strip()]
+def date_of(name: str, row: dict) -> str:
+    if row.get("date"):
+        return str(row["date"])
+    m = re.match(r"(\d{4}-\d{2}-\d{2})", name)
+    return m.group(1) if m else "—"
 
 
-def main() -> None:
-    dedup = {}
+def gather() -> list[dict]:
+    dedup, images = {}, {}
     dedup_json = ROOT.parent / "data/drafts/dedup.json"
     if dedup_json.exists():
         dedup = json.loads(dedup_json.read_text(encoding="utf-8"))
-    pool = load(f"data/drafts/{DATE}-batch.jsonl", "池")
-    selected = load(f"data/drafts/{DATE}.jsonl", "选定")
-    candidates = load(f"data/drafts/{DATE}-candidates.jsonl", "备选")
-    images = {}
-    imgjson = ROOT.parent / "data/drafts/images.json"
-    if imgjson.exists():
-        images = json.loads(imgjson.read_text(encoding="utf-8"))
-
+    img_json = ROOT.parent / "data/drafts/images.json"
+    if img_json.exists():
+        images = json.loads(img_json.read_text(encoding="utf-8"))
 
     out = []
-    for origin, rows in (("选定", selected), ("备选", candidates), ("池", pool)):
-        for r in rows:
+    for path in sorted((ROOT.parent / "data/drafts").glob("*.jsonl")):
+        if path.name in ("dedup.json", "image_overrides.json", "images.json"):
+            continue
+        stem = path.stem
+        origin = next((v for k, v in ORIGIN_BY_SUFFIX.items() if stem.endswith(k)), "选定")
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            r = json.loads(line)
             text = r["text"]
             out.append({
-                "id": r["id"], "account": r.get("account", "—"), "slot": r.get("slot", "—"),
+                "id": r["id"], "date": date_of(path.name, r),
+                "account": r.get("account", "—"), "slot": r.get("slot", "—"),
                 "origin": origin, "tag": tag_for(r.get("topic", ""), r["id"]),
                 "type": "热点跟评" if r.get("claim") == "assertion" else "日常观察",
                 "mode": "问句" if ("？" in text or "?" in text) else "陈述句",
+                "chars": len(text),
                 "text": text,
                 "source_title": r.get("source_title", ""), "source_url": r.get("source_url", ""),
                 "image": (images.get(r["id"]) or {}).get("src"),
@@ -84,12 +89,15 @@ def main() -> None:
                 "image_origin": (images.get(r["id"]) or {}).get("origin", ""),
                 "preset": "duplicate" if dedup.get(r["id"]) else None,
             })
+    return out
 
+
+def main() -> None:
+    rows = gather()
     tpl = (ROOT / "template.html").read_text(encoding="utf-8")
-    data = json.dumps(out, ensure_ascii=False)
-    html = tpl.replace("__DATA__", data)
+    html = tpl.replace("__DATA__", json.dumps(rows, ensure_ascii=False))
     (ROOT / "index.html").write_text(html, encoding="utf-8")
-    print(f"wrote site/index.html  posts={len(out)}  bytes={len(html.encode())}")
+    print(f"wrote site/index.html  posts={len(rows)}  dates={len({r['date'] for r in rows})}  bytes={len(html.encode())}")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>对标账号 · 帖子评分</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="hrow">
+    <h1>对标账号 · 帖子评分</h1>
+    <span class="kbd"><a href="index.html" style="color:var(--acc)">← 回稿池</a> · 0–10 分，起草时优先参考高分帖</span>
+    <div class="counters">
+      <span>总 <b id="c-total">0</b></span>
+      <span>已评 <b id="c-scored">0</b></span>
+      <span>均分 <b id="c-avg">—</b></span>
+    </div>
+  </div>
+  <div class="toolbar">
+    <input type="search" id="q" placeholder="搜正文">
+    <select id="f-score">
+      <option value="">全部分数</option>
+      <option value="un">未评分</option>
+      <option value="high">9–10</option>
+      <option value="mid">7–8</option>
+      <option value="low">5–6</option>
+      <option value="bad">0–4</option>
+    </select>
+    <select id="f-date"><option value="">全部日期</option></select>
+    <select id="f-sort">
+      <option value="time">按时间</option>
+      <option value="score">按分数</option>
+      <option value="views">按展示</option>
+    </select>
+    <button id="export">导出评分</button>
+    <button id="import">导入评分</button>
+    <button id="reset">重置</button>
+    <input type="file" id="file" accept="application/json" hidden>
+  </div>
+  <div class="charts" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+    <div class="panel" style="min-height:150px"><h3>评分分布</h3><div id="ch-score"></div></div>
+    <div class="panel"><h3>评分进度</h3><div id="ch-progress"></div></div>
+  </div>
+</header>
+<main id="list"></main>
+<div id="toast"></div>
+<script>
+const POSTS = __DATA__;
+const KEY = 'zs-target-ratings';
+const st = (() => { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } })();
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { toast('本地存储写入失败', true); } };
+const $ = s => document.querySelector(s);
+const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+let toastTimer = null;
+const toast = (msg, err) => {
+  const t = $('#toast'); t.textContent = msg; t.className = 'show' + (err ? ' err' : '');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.className = ''; }, 1600);
+};
+
+const scoreOf = id => (typeof st[id] === 'number' ? st[id] : null);
+
+function stats() {
+  const scored = POSTS.filter(p => scoreOf(p.id) !== null);
+  const sum = scored.reduce((s, p) => s + scoreOf(p.id), 0);
+  return { n: scored.length, avg: scored.length ? (sum / scored.length).toFixed(1) : '—' };
+}
+
+function updateCounters() {
+  const { n, avg } = stats();
+  $('#c-total').textContent = POSTS.length;
+  $('#c-scored').textContent = n;
+  $('#c-avg').textContent = avg;
+}
+
+/* ---------- 图表 ---------- */
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const svgEl = (tag, attrs) => { const n = document.createElementNS(SVG_NS, tag); Object.entries(attrs || {}).forEach(([k, v]) => n.setAttribute(k, v)); return n; };
+
+function bars(host, data, color) {
+  const max = Math.max(1, ...data.map(d => d.value));
+  const h = 80, gap = 4, w = 240;
+  const bw = Math.max(4, (w - gap * (data.length - 1)) / Math.max(1, data.length));
+  const svg = svgEl('svg', { viewBox: `0 0 ${w} ${h + 26}` });
+  data.forEach((d, i) => {
+    const bh = Math.round((d.value / max) * h);
+    const x = i * (bw + gap);
+    svg.append(svgEl('rect', { x, y: h - bh, width: bw, height: Math.max(bh, d.value ? 2 : 0), rx: 2, fill: d.color || color }));
+    const t = svgEl('text', { x: x + bw / 2, y: h + 12, 'text-anchor': 'middle', 'font-size': '8', fill: '#8b949e' });
+    t.textContent = d.label; svg.append(t);
+    if (d.value) {
+      const v = svgEl('text', { x: x + bw / 2, y: h - bh - 3, 'text-anchor': 'middle', 'font-size': '8', fill: '#8b949e' });
+      v.textContent = d.value; svg.append(v);
+    }
+  });
+  host.replaceChildren(svg);
+}
+
+function donut(host, data) {
+  const total = data.reduce((s, d) => s + d.value, 0) || 1;
+  const svg = svgEl('svg', { viewBox: '0 0 120 120' });
+  const r = 44, cx = 60, cy = 60, c = 2 * Math.PI * r;
+  let offset = 0;
+  data.forEach(d => {
+    if (!d.value) return;
+    svg.append(svgEl('circle', {
+      cx, cy, r, fill: 'none', stroke: d.color, 'stroke-width': 14,
+      'stroke-dasharray': `${(d.value / total) * c} ${c}`, 'stroke-dashoffset': -offset,
+      transform: `rotate(-90 ${cx} ${cy})`
+    }));
+    offset += (d.value / total) * c;
+  });
+  const center = svgEl('text', { x: cx, y: cy, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: '#e6edf3', 'font-size': '18', 'font-weight': '600' });
+  center.textContent = Math.round((data[0].value / total) * 100) + '%';
+  svg.append(center);
+  host.replaceChildren(svg);
+  const legend = el('div', 'legend');
+  data.forEach(d => {
+    const s = el('span'); const i = el('i'); i.style.background = d.color;
+    s.append(i, document.createTextNode(`${d.label} ${d.value}`)); legend.append(s);
+  });
+  host.append(legend);
+}
+
+function renderCharts() {
+  const buckets = Array.from({ length: 11 }, (_, i) => ({ label: String(i), value: 0 }));
+  POSTS.forEach(p => { const s = scoreOf(p.id); if (s !== null) buckets[s].value += 1; });
+  if (!POSTS.some(p => scoreOf(p.id) !== null)) {
+    $('#ch-score').replaceChildren(el('div', 'empty', '还没有评分：点下面的 0–10'));
+  } else {
+    bars($('#ch-score'), buckets, '#1f6feb');
+  }
+  const { n } = stats();
+  donut($('#ch-progress'), [
+    { label: '已评', value: n, color: '#3fb950' },
+    { label: '未评', value: POSTS.length - n, color: '#30363d' }
+  ]);
+}
+
+/* ---------- 卡片 ---------- */
+function buildCard(p) {
+  const card = el('div', 'card');
+  card.dataset.id = p.id;
+  const head = el('div', 'head');
+  head.append(el('span', 'badge', p.date), el('span', 'badge', p.chars + ' 字'));
+  if (p.media) head.append(el('span', 'badge t', '带图'));
+  const scoreTag = el('span', 'state');
+  head.append(scoreTag);
+
+  const body = el('div', 'body');
+  const textcol = el('div', 'textcol');
+  textcol.append(el('div', 'text', p.text));
+  body.append(textcol);
+
+  const meta = el('div', 'meta');
+  meta.append(el('span', null, `展示 ${p.views ?? '—'}`), el('span', null, `赞 ${p.likes ?? '—'}`),
+    el('span', null, `回复 ${p.replies ?? '—'}`));
+  const link = el('a', null, '原帖');
+  link.href = p.url; link.target = '_blank'; link.rel = 'noopener'; link.style.color = 'var(--acc)';
+  meta.append(link);
+
+  const actions = el('div', 'actions');
+  const rate = el('div', 'rate');
+  const buttons = [];
+  for (let i = 0; i <= 10; i++) {
+    const b = el('button', null, String(i));
+    b.addEventListener('click', () => { st[p.id] = i; save(); refresh(); applyFilter(); toast(`已评 ${i} 分`); });
+    buttons.push(b); rate.append(b);
+  }
+  const clear = el('button', null, '清除');
+  clear.addEventListener('click', () => { delete st[p.id]; save(); refresh(); applyFilter(); toast('已清除评分'); });
+  actions.append(rate, clear);
+
+  card.append(head, body, meta, actions);
+
+  function refresh() {
+    const s = scoreOf(p.id);
+    buttons.forEach((b, i) => b.classList.toggle('on', s === i));
+    scoreTag.className = 'state' + (s === null ? '' : (s >= 8 ? ' used' : (s <= 4 ? ' rejected' : ' edited')));
+    scoreTag.textContent = s === null ? '未评分' : s + ' 分';
+    updateCounters(); renderCharts();
+  }
+  card.refresh = refresh;
+  refresh();
+  return card;
+}
+
+function applyFilter() {
+  const q = $('#q').value.trim().toLowerCase();
+  const fs = $('#f-score').value, date = $('#f-date').value;
+  let shown = 0;
+  document.querySelectorAll('.card').forEach(card => {
+    const p = card._p;
+    const s = scoreOf(p.id);
+    let ok = true;
+    if (q && !p.text.toLowerCase().includes(q)) ok = false;
+    if (ok && date && p.date !== date) ok = false;
+    if (ok && fs) {
+      if (fs === 'un') ok = s === null;
+      else if (fs === 'high') ok = s !== null && s >= 9;
+      else if (fs === 'mid') ok = s !== null && s >= 7 && s <= 8;
+      else if (fs === 'low') ok = s !== null && s >= 5 && s <= 6;
+      else if (fs === 'bad') ok = s !== null && s <= 4;
+    }
+    card.hidden = !ok;
+    if (ok) shown++;
+  });
+  $('#c-total').textContent = POSTS.length;
+  $('#c-scored').textContent = stats().n;
+  $('#c-avg').textContent = stats().avg;
+}
+
+/* ---------- 启动 ---------- */
+const list = $('#list');
+const frag = document.createDocumentFragment();
+[...POSTS].forEach(p => {
+  const c = buildCard(p);
+  c._p = p;
+  frag.append(c);
+});
+list.append(frag);
+applyFilter();
+
+[...new Set(POSTS.map(p => p.date))].sort().forEach(d => { const o = el('option', null, d); o.value = d; $('#f-date').append(o); });
+
+['q', 'f-score', 'f-date'].forEach(id => $('#' + id).addEventListener('input', applyFilter));
+$('#f-sort').addEventListener('change', () => {
+  const mode = $('#f-sort').value;
+  const arr = [...POSTS].sort((a, b) => {
+    if (mode === 'score') return (scoreOf(b.id) ?? -1) - (scoreOf(a.id) ?? -1);
+    if (mode === 'views') return (b.views || 0) - (a.views || 0);
+    return a.ts - b.ts;
+  });
+  list.replaceChildren(...arr.map(p => document.querySelector(`.card[data-id="${p.id}"]`)).filter(Boolean));
+  applyFilter();
+});
+
+$('#export').addEventListener('click', () => {
+  const out = POSTS.filter(p => scoreOf(p.id) !== null).map(p => ({ id: p.id, score: scoreOf(p.id) }));
+  const blob = new Blob([JSON.stringify(out, null, 1)], { type: 'application/json' });
+  const a = el('a'); a.href = URL.createObjectURL(blob); a.download = 'target-ratings.json'; a.click();
+  URL.revokeObjectURL(a.href);
+  toast(`已导出 ${out.length} 条`);
+});
+
+$('#import').addEventListener('click', () => $('#file').click());
+$('#file').addEventListener('change', async () => {
+  const f = $('#file').files[0]; if (!f) return;
+  try {
+    const rows = JSON.parse(await f.text());
+    rows.forEach(r => { if (r && r.id && typeof r.score === 'number') st[r.id] = r.score; });
+    save(); toast(`已导入 ${rows.length} 条`); setTimeout(() => location.reload(), 500);
+  } catch (e) { toast('导入失败：不是合法 JSON', true); }
+});
+
+$('#reset').addEventListener('click', () => {
+  if (!confirm('清空所有评分？')) return;
+  localStorage.removeItem(KEY); location.reload();
+});
+</script>
+</body>
+</html>
