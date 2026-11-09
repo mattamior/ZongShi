@@ -4,7 +4,7 @@
 
 1. **交接未完成，周一（2026-11-09）继续**（Principal 2026-11-07 确认）。本次只同步文档；不据此启动账号运营或创建定时任务。
 2. 周一从 `HANDOVER.md` 继续：确认 mt.ai 接管进度、实际环境与账号 `@MattDjj`。内容方向已定为**时政 / 日常评论**，不再作为待拍板项。旧机器路径、Chrome 窗口 ID 与 11-06 的 403 / 404 / 422 结果需要按实际环境核对。
-3. 今日稿池 `data/drafts/2026-11-09-batch.{jsonl,md}`：384 条候选、192 个位；审稿页 `site/index.html`（`python3 -m http.server 8777 --directory site` 打开）。等 Principal 点完复制/废弃/编辑后导出 JSON，再据此定发布单。均**未发布**。
+3. 今日稿池 `data/drafts/2026-11-09-batch.{jsonl,md}`：384 条候选、192 个位；审稿页 `site/index.html`（`python3 -m http.server 8777 --directory site` 打开），正文重复的 19 条已预置为「重复」并默认隐藏。等 Principal 点完复制/重复/废弃/编辑后导出 JSON，再据此定发布单。均**未发布**。
 4. 接管优先复用 mt.ai，勿重复建设发送闭环；`follow_back.py` 已废弃，勿用。`PLAN.md` 的早期回复策略与高频配额不作为当前执行参数。
 5. 若继续生成时事稿，再手动运行 `python3 scripts/fetch_news.py --output-dir data/news` 获取当日来源；硬拦截后用 `analyze_gap.py` 回查分布。检查通过不代表事实已核实或允许自动发布。
 6. 运营恢复后的效果回收需区分帖子互动、账号粉丝变化与曝光缺失；旧快照不代表当前指标，不能据此确认增长归因或接管完成。
