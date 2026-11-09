@@ -19,7 +19,7 @@
 | [data/target/posts-merged/posts.jsonl](data/target/posts-merged/posts.jsonl) | 去重后的 298 条原创帖；同目录保留 `post-stats.json` |
 | [data/target/20261105T-posts/](data/target/20261105T-posts/)、[data/target/20261105T1052Z/](data/target/20261105T1052Z/)、[data/target/timeline-api/](data/target/timeline-api/) | 镜像与登录态时间线采集留档；均有覆盖边界 |
 | [data/eval/](data/eval/)、[guard/banned.md](guard/banned.md)、[guard/check_text.py](guard/check_text.py) | 三批样稿、自评报告与出稿前硬拦截 |
-| [data/drafts/](data/drafts/) | 稿件库，含 11 月 7–8 日的 16 条预写稿；稿件日期不证明已排期或已发布 |
+| [data/drafts/](data/drafts/) | 稿件库；每条用「`### id 时段·模板·字数` + 代码块」排版，便于整条复制；稿件日期不证明已排期或已发布 |
 | [scripts/fetch_news.py](scripts/fetch_news.py) | 手动获取当日热榜，为时事稿保留来源 |
 | [scripts/match_published.py](scripts/match_published.py)、[data/scheduled/published.jsonl](data/scheduled/published.jsonl) | 已发帖与稿件匹配；现有台账仅覆盖当时首屏可见的 4 条 |
 | [scripts/collect_metrics.py](scripts/collect_metrics.py)、[data/metrics/snapshots.jsonl](data/metrics/snapshots.jsonl) | 帖子互动与账号指标历史快照；查看数可能缺失 |
