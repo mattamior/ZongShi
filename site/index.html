@@ -36,6 +36,7 @@
     <label class="chk" title="同一段正文出现多次时，只留优先级最高的一条"><input type="checkbox" id="hide-dup" checked> 隐藏重复</label>
     <button id="copy-used">复制已用</button>
     <button id="export">导出</button>
+    <button id="save">保存到仓库</button>
     <button id="import">导入</button>
     <button id="reset">重置</button>
     <input type="file" id="file" accept="application/json" hidden>
@@ -438,6 +439,22 @@ $('#export').addEventListener('click', () => {
   a.click();
   URL.revokeObjectURL(a.href);
   toast(`已导出 ${out.length} 条`);
+});
+
+$('#save').addEventListener('click', async () => {
+  const out = POSTS.map(p => {
+    const r = st[p.id] || {};
+    return { id: p.id, date: p.date, state: stateName(p.id)[0], text: r.text != null ? r.text : p.text, image: r.image || null };
+  }).filter(x => x.state !== 'pending');
+  if (!out.length) { toast('还没有标记', true); return; }
+  try {
+    const resp = await fetch('/save?name=review.json', { method: 'POST', body: JSON.stringify(out) });
+    if (!resp.ok) throw new Error(await resp.text());
+    const j = await resp.json();
+    toast(`已写入 ${j.saved}（${j.rows} 条）`);
+  } catch (e) {
+    toast('保存失败：服务没开写入口，请用「导出」', true);
+  }
 });
 
 $('#import').addEventListener('click', () => $('#file').click());

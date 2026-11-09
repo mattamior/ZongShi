@@ -46,7 +46,7 @@ python3 site/fetch_images.py               # 抓新闻配图（原文 og:image �
 python3 site/build_target.py               # 生成对标账号评分页 site/target.html（298 条，0–10 分）
 python3 site/plan_dedupe.py                # 按正文去重：逐字或几乎一样的帖子只留一条，其余标记「重复」
 python3 site/build_site.py                 # 读 data/drafts/*.jsonl，生成 site/index.html（数据内嵌）
-python3 -m http.server 8777 --directory site
+python3 site/serve.py 8777                  # 静态服务 + POST /save（页面上的「保存到仓库」直接写文件）
 # 打开 http://127.0.0.1:8777/index.html
 ```
 
@@ -56,7 +56,7 @@ python3 -m http.server 8777 --directory site
 - 每张卡显示编号、账号、时段、来源（选定/备选/池）、题材、类型、问句/陈述、字数，以及出处标题和原文链接。
 - 单条想指定配图：在 `data/drafts/image_overrides.json` 里加 `"<id>": {"q": "搜索关键词", "credit": "百度图片"}`（也可用 `url` 钉死），再跑 `fetch_images.py`。
 - 配图是新闻图：先取原文 `og:image`，取不到用图片搜索兜底，仍没有就不配图（日常观察类本来没有）。图片放正文右侧、点击看大图，图下标注「原文 / 百度图片（非原文配图）」；**「复制图片」与正文「复制」是两颗独立按钮**。
-- 状态（已用/废弃/改动/配图）存在浏览器 localStorage，可「导出结果」下载 JSON，或「复制已用文本」一次性拿走。
+- 状态（已用/废弃/改动/配图）存在浏览器 localStorage；点「保存到仓库」直接把 `data/drafts/review.json` 写进仓库（需要 `site/serve.py`），也可「导出」下载。
 - 快捷键：`j`/`k` 切换、`c` 复制、`d` 重复、`x` 废弃、`e` 编辑。
 - 顶部「隐藏重复」默认勾选：`plan_dedupe.py` 把正文逐字/近似重复的帖子（优先留选定、备选，其次按时间）预置为「重复」并隐藏；同主题换角度的帖子不算重复。取消勾选或把状态筛成「重复」才看得到。
 - 必须用 http 打开：`file://` 下浏览器不给剪贴板权限，复制会失败。
@@ -65,7 +65,7 @@ python3 -m http.server 8777 --directory site
 
 - 298 条原创帖逐条打 0–10 分，状态存 `localStorage: zs-target-ratings`，可导出 `target-ratings.json`。
 - 没耐心逐条打时点「按展示补分」：只补未评分的，>10000 展示记 5 分、1000–10000 记 4 分、≤1000 记 1 分；已评的不动。也可以把导出文件给我，跑 `python3 scripts/fill_ratings.py <导出.json>` 服务端合并（结果 `data/eval/target-ratings-filled.json`）。
-- 打完分把导出的文件放到 `data/eval/target-ratings.json`，跑 `python3 scripts/style_priority.py data/eval/target-ratings.json`，生成 `data/eval/target-priority.json`：按分数排序的正文 + 高分帖的长度/行数/问句/带图画像。
+- 点「保存到仓库」会把 `data/eval/target-ratings.json` 直接写进仓库（需要 `site/serve.py`）；也可导出后手动放。拿到后，跑 `python3 scripts/style_priority.py data/eval/target-ratings.json`，生成 `data/eval/target-priority.json`：按分数排序的正文 + 高分帖的长度/行数/问句/带图画像。
 - **起草只参考评分 >4 分的帖子**：`python3 scripts/style_priority.py data/eval/target-ratings.json` 默认按 `--min 4` 过滤，输出里的 `ranking` 就是可参考清单；`profile` 用作长度和句式基准。
 
 ## 已定边界

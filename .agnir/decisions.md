@@ -1,5 +1,6 @@
 # Decisions
 
+- **评分落地方式（2026-11-09）**：浏览器 localStorage 无法被外部读取（`~/Library/Application Support/Google/Chrome` 受 macOS 保护，Operation not permitted），因此页面加「保存到仓库」按钮，经 `site/serve.py` 的 `POST /save` 直接写 `data/eval/target-ratings.json` 与 `data/drafts/review.json`。导出下载仍保留为兜底。
 - **起草参考范围（2026-11-09，Principal）**：只参考对标评分 **>4 分**的帖子起草；≤4 分不作为模仿对象。落地为 `scripts/style_priority.py --min 4` 生成的 `data/eval/target-priority.json`（当前 298 条全量里保留 59 条）。
 - **对标帖补分口径（2026-11-09，Principal）**：未逐条评分的帖子按展示量兜底——>10000 记 5 分，1000–10000 记 4 分，≤1000 记 1 分；已评的分数不动。页面按钮与服务端 `scripts/fill_ratings.py` 同规则。
 - **审稿站排版（2026-11-09，Principal）**：两页共用顶部导航（稿池 / 对标评分）、统一 `site/style.css`；工具栏单行横向滚动，图表移出吸顶区并与卡片区同宽。

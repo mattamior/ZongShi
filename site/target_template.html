@@ -38,6 +38,7 @@
       <option value="views">按展示</option>
     </select>
     <button id="autofill">按展示补分</button>
+    <button id="save" class="primary">保存到仓库</button>
     <button id="export">导出评分</button>
     <button id="import">导入评分</button>
     <button id="reset">重置</button>
@@ -255,6 +256,21 @@ $('#autofill').addEventListener('click', () => {
   document.querySelectorAll('.card').forEach(c => c.refresh && c.refresh());
   applyFilter();
   toast(`已补 ${pending.length} 条`);
+});
+
+const rowsForSave = () => POSTS.filter(p => scoreOf(p.id) !== null).map(p => ({ id: p.id, score: scoreOf(p.id) }));
+
+$('#save').addEventListener('click', async () => {
+  const rows = rowsForSave();
+  if (!rows.length) { toast('还没有评分', true); return; }
+  try {
+    const r = await fetch('/save?name=target-ratings.json', { method: 'POST', body: JSON.stringify(rows) });
+    if (!r.ok) throw new Error(await r.text());
+    const j = await r.json();
+    toast(`已写入 ${j.saved}（${j.rows} 条）`);
+  } catch (e) {
+    toast('保存失败：服务没开写入口，请用「导出评分」', true);
+  }
 });
 
 $('#export').addEventListener('click', () => {
