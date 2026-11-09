@@ -62,8 +62,7 @@ def main() -> None:
     imgjson = ROOT.parent / "data/drafts/images.json"
     if imgjson.exists():
         images = json.loads(imgjson.read_text(encoding="utf-8"))
-    for f in (ROOT / "img").glob("*.jpg"):
-        images.setdefault(f.stem, f"img/{f.name}")
+
 
     out = []
     for origin, rows in (("选定", selected), ("备选", candidates), ("池", pool)):
@@ -76,7 +75,9 @@ def main() -> None:
                 "mode": "问句" if ("？" in text or "?" in text) else "陈述句",
                 "text": text,
                 "source_title": r.get("source_title", ""), "source_url": r.get("source_url", ""),
-                "image": images.get(r["id"]),
+                "image": (images.get(r["id"]) or {}).get("src"),
+                "image_credit": (images.get(r["id"]) or {}).get("credit", ""),
+                "image_origin": (images.get(r["id"]) or {}).get("origin", ""),
             })
 
     tpl = (ROOT / "template.html").read_text(encoding="utf-8")
