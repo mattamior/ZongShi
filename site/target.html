@@ -37,6 +37,7 @@
       <option value="score">按分数</option>
       <option value="views">按展示</option>
     </select>
+    <button id="autofill">按展示补分</button>
     <button id="export">导出评分</button>
     <button id="import">导入评分</button>
     <button id="reset">重置</button>
@@ -239,6 +240,21 @@ $('#f-sort').addEventListener('change', () => {
   });
   list.replaceChildren(...arr.map(p => document.querySelector(`.card[data-id="${p.id}"]`)).filter(Boolean));
   applyFilter();
+});
+
+$('#autofill').addEventListener('click', () => {
+  const pending = POSTS.filter(p => scoreOf(p.id) === null);
+  if (!pending.length) { toast('没有未评分的帖子了'); return; }
+  const v = p => Number(p.views) || 0;
+  const n5 = pending.filter(p => v(p) > 10000).length;
+  const n4 = pending.filter(p => v(p) > 1000 && v(p) <= 10000).length;
+  const n1 = pending.length - n5 - n4;
+  if (!confirm(`给剩下 ${pending.length} 条按展示补分？\n\n>10000 → 5 分：${n5} 条\n1000–10000 → 4 分：${n4} 条\n≤1000 → 1 分：${n1} 条`)) return;
+  pending.forEach(p => { st[p.id] = v(p) > 10000 ? 5 : (v(p) > 1000 ? 4 : 1); });
+  save();
+  document.querySelectorAll('.card').forEach(c => c.refresh && c.refresh());
+  applyFilter();
+  toast(`已补 ${pending.length} 条`);
 });
 
 $('#export').addEventListener('click', () => {
