@@ -22,6 +22,7 @@ button.primary{background:#1f6feb;border-color:#1f6feb}
 button.primary:hover{background:#2b7bf5}
 input[type=search],select{background:var(--card2);border:1px solid var(--line);color:var(--fg);border-radius:6px;padding:6px 10px;font-size:13px;min-width:120px}
 input[type=search]{flex:1;min-width:200px}
+.chk{display:flex;align-items:center;gap:5px;font-size:12.5px;color:var(--dim);white-space:nowrap}
 main{max-width:1180px;margin:0 auto;padding:18px 20px 80px;display:flex;flex-direction:column;gap:14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;outline:none;transition:border-color .12s,opacity .12s}
 .card:focus{border-color:var(--acc)}
@@ -95,6 +96,7 @@ main{max-width:1180px;margin:0 auto;padding:18px 20px 80px;display:flex;flex-dir
     <select id="f-origin"><option value="">全部来源</option><option value="选定">选定</option><option value="备选">备选</option><option value="池">池</option></select>
     <select id="f-tag"><option value="">全部题材</option></select>
     <select id="f-hour"><option value="">全部时段</option></select>
+    <label class="chk" title="按主题去重后，同一主题只留 2 条"><input type="checkbox" id="hide-dup" checked> 隐藏重复</label>
     <button id="copy-used">复制已用文本</button>
     <button id="export">导出结果</button>
     <button id="reset">重置</button>
@@ -104,6 +106,7 @@ main{max-width:1180px;margin:0 auto;padding:18px 20px 80px;display:flex;flex-dir
 <div id="toast"></div>
 <script>
 const POSTS = __DATA__;
+const byId = Object.fromEntries(POSTS.map(p => [p.id, p]));
 const KEY = 'zs-review-2026-11-09';
 let st = {};
 try { st = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { st = {}; }
@@ -121,6 +124,8 @@ const stateName = id => {
   if (r.status === 'rejected') return ['rejected','废弃'];
   if (r.status === 'duplicate') return ['dup','重复'];
   if (r.text != null) return ['edited','已改'];
+  const preset = byId[id] && byId[id].preset;
+  if (preset === 'duplicate') return ['dup','重复'];
   return ['pending','未处理'];
 };
 
@@ -267,6 +272,8 @@ for (const h of hours) { const o = el('option', '', h + ' 时'); o.value = h; $(
 const matches = p => {
   const q = $('#q').value.trim().toLowerCase();
   const acc = $('#f-acc').value, stt = $('#f-state').value, tag = $('#f-tag').value, hr = $('#f-hour').value, org = $('#f-origin').value;
+  const hideDup = $('#hide-dup').checked;
+  if (hideDup && stt !== 'duplicate' && stateName(p.id)[0] === 'dup') return false;
   if (acc && p.account !== acc) return false;
   if (org && p.origin !== org) return false;
   if (tag && p.tag !== tag) return false;
@@ -288,7 +295,7 @@ function applyFilter() {
   }
   $('#c-shown').textContent = shown;
 }
-['q','f-acc','f-state','f-tag','f-hour','f-origin'].forEach(id => {
+['q','f-acc','f-state','f-tag','f-hour','f-origin','hide-dup'].forEach(id => {
   document.getElementById(id).addEventListener('input', applyFilter);
 });
 
@@ -296,6 +303,7 @@ const list = $('#list');
 const frag = document.createDocumentFragment();
 for (const p of POSTS) frag.append(buildCard(p));
 list.append(frag);
+applyFilter();
 
 $('#copy-used').addEventListener('click', async () => {
   const parts = POSTS.filter(p => stateName(p.id)[0] === 'used').map(p => currentText(p));

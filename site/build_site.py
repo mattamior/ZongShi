@@ -55,6 +55,10 @@ def load(path: str, origin: str) -> list[dict]:
 
 
 def main() -> None:
+    dedup = {}
+    dedup_json = ROOT.parent / "data/drafts/dedup.json"
+    if dedup_json.exists():
+        dedup = json.loads(dedup_json.read_text(encoding="utf-8"))
     pool = load(f"data/drafts/{DATE}-batch.jsonl", "池")
     selected = load(f"data/drafts/{DATE}.jsonl", "选定")
     candidates = load(f"data/drafts/{DATE}-candidates.jsonl", "备选")
@@ -78,6 +82,7 @@ def main() -> None:
                 "image": (images.get(r["id"]) or {}).get("src"),
                 "image_credit": (images.get(r["id"]) or {}).get("credit", ""),
                 "image_origin": (images.get(r["id"]) or {}).get("origin", ""),
+                "preset": "duplicate" if dedup.get(r["id"]) else None,
             })
 
     tpl = (ROOT / "template.html").read_text(encoding="utf-8")

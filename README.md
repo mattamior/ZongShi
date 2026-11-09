@@ -43,6 +43,7 @@ python3 guard/check_text.py --file data/drafts/2026-11-07_08.jsonl
 
 ```bash
 python3 site/fetch_images.py               # 抓新闻配图（原文 og:image 优先，取不到用图片搜索兜底）
+python3 site/plan_dedupe.py                # 按主题去重：同主题留 2 条，其余标记为「重复」
 python3 site/build_site.py                 # 读 data/drafts/*.jsonl，生成 site/index.html（数据内嵌）
 python3 -m http.server 8777 --directory site
 # 打开 http://127.0.0.1:8777/index.html
@@ -53,6 +54,7 @@ python3 -m http.server 8777 --directory site
 - 配图是新闻图：先取原文 `og:image`，取不到用图片搜索兜底，仍没有就不配图（日常观察类本来没有）。图片放正文右侧、点击看大图，图下标注「原文 / 百度图片（非原文配图）」；**「复制图片」与正文「复制」是两颗独立按钮**。
 - 状态（已用/废弃/改动/配图）存在浏览器 localStorage，可「导出结果」下载 JSON，或「复制已用文本」一次性拿走。
 - 快捷键：`j`/`k` 切换、`c` 复制、`d` 重复、`x` 废弃、`e` 编辑。
+- 顶部「隐藏重复」默认勾选：`plan_dedupe.py` 按主题只留 2 条（优先选定/备选，其次按时间），其余预置为「重复」，取消勾选或把状态筛成「重复」才看得到。
 - 必须用 http 打开：`file://` 下浏览器不给剪贴板权限，复制会失败。
 
 ## 已定边界
