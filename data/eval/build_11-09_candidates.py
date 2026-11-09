@@ -46,10 +46,6 @@ add(id="u07", slot="傍晚", template="时政跟评", claim="assertion",
 
 add(id="v01", slot="上午", template="热搜跟评", claim="assertion",
     text="太原那栋楼，14 个人没出来\n\n通报说原因正在查\n\n查完是不是又一句「举一反三」？\n\n@grok", **src("太原"))
-add(id="v02", slot="中午", template="职场跟评", claim="assertion",
-    text="试用期没转正，离职员工改了后台，公司赔几百万\n\n权限给了六个月才想起收？\n\n@grok", **src("试用期"))
-add(id="v03", slot="下午", template="体育提问", claim="assertion",
-    text="普通人拼命能 20 分钟跑完 5 公里？\n\n说能的，明早六点操场见\n\n@grok", **src("5公里"))
 add(id="v04", slot="晚上", template="科技跟评", claim="assertion",
     text="英伟达 7600 万的货失踪了\n\n芯片还能长腿跑？\n\n@grok", **src("英伟达"))
 
