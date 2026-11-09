@@ -43,12 +43,15 @@ add(id="u06", slot="下午", template="消费跟评", claim="assertion",
     text="胖东来那瓶洗发水，当初吹日本原产\n\n现在否认，说要维权\n\n那先道歉的该是谁？\n\n@grok", **src("卡蓓诺"))
 add(id="u07", slot="傍晚", template="时政跟评", claim="assertion",
     text="对美加税又暂停 24%\n\n这税到底是打美国人的，还是给我们交的？\n\n@grok", **src("24%"))
-add(id="u08", slot="傍晚", template="体育跟评", claim="assertion",
-    text="BLG 连斩三支 LCK，要一穿四\n\n赢了算 LPL 的，输了算谁的？\n\n@grok", **src("BLG 连斩"))
-add(id="u09", slot="晚上", template="热搜跟评", claim="assertion",
-    text="秦皇岛二十年最大的雪，长城上人比雪厚\n\n景区今天的限流公告发了吗？\n\n@grok", **src("秦皇岛"))
-add(id="u10", slot="晚上", template="时政提问", claim="assertion",
-    text="多地向市民免费赠花\n\n花摆完了，谁负责浇？\n\n@grok", **src("免费赠花"))
+
+add(id="v01", slot="上午", template="热搜跟评", claim="assertion",
+    text="太原那栋楼，14 个人没出来\n\n通报说原因正在查\n\n查完是不是又一句「举一反三」？\n\n@grok", **src("太原"))
+add(id="v02", slot="中午", template="职场跟评", claim="assertion",
+    text="试用期没转正，离职员工改了后台，公司赔几百万\n\n权限给了六个月才想起收？\n\n@grok", **src("试用期"))
+add(id="v03", slot="下午", template="体育提问", claim="assertion",
+    text="普通人拼命能 20 分钟跑完 5 公里？\n\n说能的，明早六点操场见\n\n@grok", **src("5公里"))
+add(id="v04", slot="晚上", template="科技跟评", claim="assertion",
+    text="英伟达 7600 万的货失踪了\n\n芯片还能长腿跑？\n\n@grok", **src("英伟达"))
 
 pathlib.Path("data/drafts/2026-11-09-candidates.jsonl").write_text(
     "\n".join(json.dumps(d, ensure_ascii=False) for d in C) + "\n", encoding="utf-8")
