@@ -1,5 +1,6 @@
 # Decisions
 
+- **审稿站排版（2026-11-09，Principal）**：两页共用顶部导航（稿池 / 对标评分）、统一 `site/style.css`；工具栏单行横向滚动，图表移出吸顶区并与卡片区同宽。
 - **审稿站通用化（2026-11-09，Principal）**：`site/index.html` 不再绑日期，读取 `data/drafts/*.jsonl` 全部日期（430 条），顶部放四张图（状态/日期/题材/字数）；新增 `site/target.html` 给对标账号 298 条帖子打 0–10 分，评分导出后经 `scripts/style_priority.py` 生成 `data/eval/target-priority.json`，起草时优先模仿 8 分以上的表达。旧键 `zs-review-2026-11-09` 自动迁移到 `zs-review-v2`。
 - **批量去重口径（2026-11-09，Principal 否决按主题去重）**：只按正文去重——归一化空白后完全相同，或 difflib 相似度 ≥0.92，视为重复；保留「选定 > 备选 > 池」中优先级最高的一条，其余预置「重复」并默认隐藏。同主题换角度的帖子是不同写法，不删。本次 404 条中命中 19 条。
 - **单条配图覆盖（2026-11-09）**：按来源匹配的图不对时，在 `data/drafts/image_overrides.json` 给该条指定关键词或图片 URL，优先级高于来源图。T1/BLG 三条（b019/b020/b115）已指定 Faker 夺冠照。

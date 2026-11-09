@@ -8,9 +8,12 @@
 </head>
 <body>
 <header>
-  <div class="hrow">
-    <h1>稿池 · 审稿台</h1>
-    <a class="kbd" href="target.html" style="color:var(--acc);text-decoration:none">对标评分 →</a>
+  <div class="nav">
+    <span class="brand">ZongShi <em>X 稿池</em></span>
+    <div class="navlinks">
+      <a class="on" href="index.html">稿池</a>
+      <a href="target.html">对标评分</a>
+    </div>
     <span class="kbd">j/k 切换 · c 复制 · d 重复 · x 废弃 · e 编辑</span>
     <div class="counters">
       <span>总 <b id="c-total">0</b></span>
@@ -31,19 +34,19 @@
     <select id="f-tag"><option value="">全部题材</option></select>
     <select id="f-hour"><option value="">全部时段</option></select>
     <label class="chk" title="同一段正文出现多次时，只留优先级最高的一条"><input type="checkbox" id="hide-dup" checked> 隐藏重复</label>
-    <button id="copy-used">复制已用文本</button>
-    <button id="export">导出结果</button>
-    <button id="import">导入结果</button>
+    <button id="copy-used">复制已用</button>
+    <button id="export">导出</button>
+    <button id="import">导入</button>
     <button id="reset">重置</button>
     <input type="file" id="file" accept="application/json" hidden>
   </div>
-  <div class="charts">
+</header>
+<div class="charts">
     <div class="panel"><h3>状态分布</h3><div id="ch-state"></div></div>
     <div class="panel"><h3>按日期</h3><div id="ch-date"></div></div>
     <div class="panel"><h3>题材 Top 8</h3><div id="ch-tag"></div></div>
     <div class="panel"><h3>字数分布</h3><div id="ch-len"></div></div>
   </div>
-</header>
 <main id="list"></main>
 <div id="toast"></div>
 <script>

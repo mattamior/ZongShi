@@ -80,3 +80,31 @@ main{max-width:1180px;margin:0 auto;padding:18px 20px 80px;display:flex;flex-dir
 .rate button:hover{border-color:#3d4856}
 .meta{font-size:12px;color:var(--dim);display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
 @media(max-width:900px){.charts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* 顶部导航 */
+.nav{display:flex;align-items:center;gap:16px;padding-bottom:10px;border-bottom:1px solid var(--line);margin-bottom:11px;flex-wrap:wrap}
+.brand{font-size:14px;font-weight:700;letter-spacing:.3px;display:flex;align-items:center;gap:8px}
+.brand em{font-style:normal;font-weight:500;font-size:11.5px;color:var(--dim);border:1px solid var(--line);border-radius:999px;padding:1px 8px}
+.navlinks{display:flex;gap:3px}
+.navlinks a{color:var(--dim);text-decoration:none;padding:5px 11px;border-radius:7px;font-size:13px;border:1px solid transparent}
+.navlinks a:hover{color:var(--fg);background:var(--card2)}
+.navlinks a.on{color:var(--fg);background:var(--card2);border-color:var(--line)}
+.nav .counters{margin-left:auto}
+/* 工具栏 */
+.toolbar{gap:7px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:3px;scrollbar-width:thin}
+.toolbar>*{flex:0 0 auto}
+.toolbar input[type=search]{flex:1 1 200px;min-width:170px}
+.toolbar select,.toolbar button{height:30px;font-size:12.5px;padding:4px 9px}
+.toolbar input[type=search]{min-width:170px;flex:1 1 200px}
+.toolbar input[type=search]{height:31px}
+/* 图表统一高度 */
+.charts{align-items:stretch;margin:0 auto;width:100%;max-width:1180px;padding:14px 20px 0}
+.panel{display:flex;flex-direction:column;min-height:186px}
+.panel svg{flex:1;max-height:118px;min-height:0}
+.panel .empty{margin:auto 0}
+/* 卡片 */
+.card{padding:13px 15px}
+.actions{margin-top:10px}
+.cardfoot{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-top:10px}
+.cardfoot .actions{margin-top:0}
+.cardfoot .meta{margin-top:0}
+@media(max-width:760px){.nav{gap:10px}.nav .counters{width:100%;margin-left:0;flex-wrap:wrap}}
