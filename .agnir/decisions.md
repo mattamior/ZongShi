@@ -1,5 +1,6 @@
 # Decisions
 
+- **起草参考范围（2026-11-09，Principal）**：只参考对标评分 **>4 分**的帖子起草；≤4 分不作为模仿对象。落地为 `scripts/style_priority.py --min 4` 生成的 `data/eval/target-priority.json`（当前 298 条全量里保留 59 条）。
 - **对标帖补分口径（2026-11-09，Principal）**：未逐条评分的帖子按展示量兜底——>10000 记 5 分，1000–10000 记 4 分，≤1000 记 1 分；已评的分数不动。页面按钮与服务端 `scripts/fill_ratings.py` 同规则。
 - **审稿站排版（2026-11-09，Principal）**：两页共用顶部导航（稿池 / 对标评分）、统一 `site/style.css`；工具栏单行横向滚动，图表移出吸顶区并与卡片区同宽。
 - **审稿站通用化（2026-11-09，Principal）**：`site/index.html` 不再绑日期，读取 `data/drafts/*.jsonl` 全部日期（430 条），顶部放四张图（状态/日期/题材/字数）；新增 `site/target.html` 给对标账号 298 条帖子打 0–10 分，评分导出后经 `scripts/style_priority.py` 生成 `data/eval/target-priority.json`，起草时优先模仿 8 分以上的表达。旧键 `zs-review-2026-11-09` 自动迁移到 `zs-review-v2`。

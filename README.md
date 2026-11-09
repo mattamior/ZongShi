@@ -66,7 +66,7 @@ python3 -m http.server 8777 --directory site
 - 298 条原创帖逐条打 0–10 分，状态存 `localStorage: zs-target-ratings`，可导出 `target-ratings.json`。
 - 没耐心逐条打时点「按展示补分」：只补未评分的，>10000 展示记 5 分、1000–10000 记 4 分、≤1000 记 1 分；已评的不动。也可以把导出文件给我，跑 `python3 scripts/fill_ratings.py <导出.json>` 服务端合并（结果 `data/eval/target-ratings-filled.json`）。
 - 打完分把导出的文件放到 `data/eval/target-ratings.json`，跑 `python3 scripts/style_priority.py data/eval/target-ratings.json`，生成 `data/eval/target-priority.json`：按分数排序的正文 + 高分帖的长度/行数/问句/带图画像。
-- 起草时先读 `target-priority.json` 的 `ranking`，优先模仿 8 分以上的表达结构；`profile` 用作长度和句式基准。
+- **起草只参考评分 >4 分的帖子**：`python3 scripts/style_priority.py data/eval/target-ratings.json` 默认按 `--min 4` 过滤，输出里的 `ranking` 就是可参考清单；`profile` 用作长度和句式基准。
 
 ## 已定边界
 

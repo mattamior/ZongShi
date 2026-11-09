@@ -4,7 +4,8 @@
 用法：
     python3 scripts/fill_ratings.py data/eval/target-ratings.json
 
-输入是评分页导出的 [{id, score}]，已评的保留原分，只补缺的；输出 data/eval/target-ratings-filled.json。
+输入是评分页导出的 [{id, score}]，已评的保留原分，只补缺的；不给文件就全部按规则补。
+输出 data/eval/target-ratings-filled.json。
 """
 from __future__ import annotations
 
@@ -25,9 +26,9 @@ def views_of(p: dict) -> int:
 
 
 def main() -> None:
-    if len(sys.argv) < 2:
-        raise SystemExit(__doc__)
-    scored = {r["id"]: r["score"] for r in json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"))}
+    scored = {}
+    if len(sys.argv) >= 2:
+        scored = {r["id"]: r["score"] for r in json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"))}
     posts = [json.loads(l) for l in SRC.read_text(encoding="utf-8").splitlines() if l.strip()]
 
     filled = 0
