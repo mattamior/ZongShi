@@ -8,6 +8,7 @@
 - **批量去重口径（2026-11-09，Principal 否决按主题去重）**：只按正文去重——归一化空白后完全相同，或 difflib 相似度 ≥0.92，视为重复；保留「选定 > 备选 > 池」中优先级最高的一条，其余预置「重复」并默认隐藏。同主题换角度的帖子是不同写法，不删。本次 404 条中命中 19 条。
 - **单条配图覆盖（2026-11-09）**：按来源匹配的图不对时，在 `data/drafts/image_overrides.json` 给该条指定关键词或图片 URL，优先级高于来源图。T1/BLG 三条（b019/b020/b115）已指定 Faker 夺冠照。
 - **审稿页（2026-11-09）**：`site/build_site.py` 把当天稿池渲染成静态页 `site/index.html`（数据内嵌、无外部依赖）。「复制=合格并标记已用、重复=与已发内容撞车、废弃=不合格、编辑=优化」；配图用新闻原图（原文 og:image 优先、图片搜索兜底、没有就不显示，不做上传），右侧显示并标注来源，图片复制与文字复制分开；状态存浏览器 localStorage，导出 JSON。因为剪贴板 API 需要安全上下文，必须用 http 打开，`file://` 下复制不可用。
+- **页面风格对齐 mt.ai（2026-11-10）**：审稿站排版与图表改成 mt.ai 看板那套语言——顶栏品牌 + 状态徽章、KPI 数字卡（含占比进度条）、四张等宽图表（环图 / 分日期柱 / 题材排行 / 字数分布，带坐标轴与数值）、吸顶工具栏、两栏稿件列表。图表用自绘 SVG，不引图表库，保持零依赖与离线可用。
 - **审稿站双向同步（2026-11-10）**：Pages 用 `_worker.js` 同域提供 `GET/POST /api/state`，状态存 KV `ZS_STATE`；页面启动拉取、标记后 800ms 防抖回写，localStorage 退为离线缓存。仓库 ↔ 线上由 `scripts/sync_state.py pull|push` 负责，本地 `serve.py` 提供同形状接口直接读写仓库文件。接口无鉴权，靠 noindex + 隐蔽 URL，可用 `push --replace` 恢复。
 - **线上状态同步（2026-11-10）**：`site/build_dist.py` 构建时把 `data/drafts/review.json` 与 `data/eval/target-ratings.json` 注入 `window.__ZS_SEED__`，页面在 localStorage 无记录时用它初始化，已有记录优先；仓库 → 线上单向，线上新标记仍用「导出」回传。
 - **审稿站部署（2026-11-09）**：Cloudflare Pages 项目 `zongshi-review`，自定义域 `zs.lapplax.com`；静态包由 `site/build_dist.py` 生成（页面 + 样式 + 配图 + `X-Robots-Tag: noindex`），`site/dist/` 不入库。`POST /save` 只有本地 `serve.py` 提供，线上自动隐藏该按钮，线上标注只存 localStorage、用「导出」回传。

@@ -7,20 +7,39 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-  <div class="nav">
-    <span class="brand">ZongShi <em>对标账号</em></span>
-    <div class="navlinks">
+<header class="appbar">
+  <div class="row1">
+    <span class="mark">X</span>
+    <div class="titles">
+      <h1>对标账号 · 评分</h1>
+      <div class="meta" id="meta-line">载入中…</div>
+    </div>
+    <nav class="navlinks">
       <a href="index.html">稿池</a>
       <a class="on" href="target.html">对标评分</a>
-    </div>
-    <span class="kbd">0–10 分，起草时优先参考高分帖</span>
-    <div class="counters">
-      <span>总 <b id="c-total">0</b></span>
-      <span>已评 <b id="c-scored">0</b></span>
-      <span>均分 <b id="c-avg">—</b></span>
+    </nav>
+    <div class="right">
+      <span class="chip wait" id="sync-chip"><i></i><span id="sync-text">同步中</span></span>
+      <span class="kbd">0–10 分 · 起草时优先参考高分帖</span>
     </div>
   </div>
+</header>
+
+<div class="shell">
+  <section class="kpis">
+    <div class="kpi"><div class="k-label">总数</div><div class="k-num" id="c-total">0</div><div class="k-sub" id="s-total">—</div><div class="bar"><i id="b-total"></i></div></div>
+    <div class="kpi"><div class="k-label">已评</div><div class="k-num ok" id="c-scored">0</div><div class="k-sub" id="s-scored">—</div><div class="bar"><i class="ok" id="b-scored"></i></div></div>
+    <div class="kpi"><div class="k-label">未评</div><div class="k-num" id="c-unscored">0</div><div class="k-sub" id="s-unscored">—</div><div class="bar"><i id="b-unscored"></i></div></div>
+    <div class="kpi"><div class="k-label">均分</div><div class="k-num" id="c-avg">—</div><div class="k-sub" id="s-avg">—</div><div class="bar"><i id="b-avg"></i></div></div>
+    <div class="kpi"><div class="k-label">7 分以上</div><div class="k-num dup" id="c-high">0</div><div class="k-sub" id="s-high">—</div><div class="bar"><i class="dup" id="b-high"></i></div></div>
+  </section>
+  <section class="charts" style="grid-template-columns:1.55fr 1fr">
+    <div class="chartcard"><div class="ch-head"><h3>评分分布</h3><span class="hint" id="h-score"></span></div><div class="ch-body" id="ch-score"></div></div>
+    <div class="chartcard"><div class="ch-head"><h3>评分进度</h3><span class="hint" id="h-progress"></span></div><div class="ch-body" id="ch-progress"></div></div>
+  </section>
+</div>
+
+<div class="toolbar-wrap">
   <div class="toolbar">
     <input type="search" id="q" placeholder="搜正文">
     <select id="f-score">
@@ -44,11 +63,7 @@
     <button id="reset">重置</button>
     <input type="file" id="file" accept="application/json" hidden>
   </div>
-</header>
-<div class="charts" style="grid-template-columns:repeat(2,minmax(0,1fr))">
-    <div class="panel"><h3>评分分布</h3><div id="ch-score"></div></div>
-    <div class="panel"><h3>评分进度</h3><div id="ch-progress"></div></div>
-  </div>
+</div>
 <main id="list"></main>
 <div id="toast"></div>
 <script>
@@ -90,12 +105,16 @@ async function pushState() {
       body: JSON.stringify({ ratings: st }),
     });
     if (!r.ok) throw new Error('HTTP ' + r.status);
+    setSync('ok', '已同步 ' + new Date().toLocaleTimeString('zh-CN', { hour12: false }));
+    updateCounters();
   } catch (e) {
+    setSync('err', '同步失败');
     toast('同步失败：评分只存在本机', true);
   }
 }
 
 async function pullState() {
+  setSync('wait', '同步中');
   try {
     const r = await fetch(SYNC, { cache: 'no-store' });
     if (!r.ok) return;
@@ -105,9 +124,10 @@ async function pullState() {
     Object.entries(remote).forEach(([id, v]) => { if (typeof v === 'number') st[id] = v; });
     try { localStorage.setItem(KEY, JSON.stringify(st)); }
     catch (e) { toast('本地存储写入失败', true); }
+    setSync('ok', '已同步 ' + new Date().toLocaleTimeString('zh-CN', { hour12: false }));
     if (localOnly) { booting = false; scheduleSync(); }
   } catch (e) {
-    /* 接口不可用就退回本机记录 */
+    setSync('err', '离线');
   }
 }
 
@@ -127,75 +147,152 @@ function stats() {
   return { n: scored.length, avg: scored.length ? (sum / scored.length).toFixed(1) : '—' };
 }
 
+const fmt = n => Number(n).toLocaleString('en-US');
+let syncedAt = '';
+const setSync = (state, text) => {
+  const chip = $('#sync-chip');
+  if (!chip) return;
+  chip.className = 'chip ' + state;
+  $('#sync-text').textContent = text;
+  if (state === 'ok') syncedAt = text;
+};
+
 function updateCounters() {
   const { n, avg } = stats();
-  $('#c-total').textContent = POSTS.length;
-  $('#c-scored').textContent = n;
+  const total = POSTS.length || 1;
+  const high = POSTS.filter(p => scoreOf(p.id) >= 7).length;
+  const pct = x => Math.round(x / total * 100);
+  $('#c-total').textContent = fmt(POSTS.length);
+  $('#c-scored').textContent = fmt(n);
+  $('#c-unscored').textContent = fmt(POSTS.length - n);
   $('#c-avg').textContent = avg;
+  $('#c-high').textContent = fmt(high);
+  $('#s-total').textContent = `${new Set(POSTS.map(p => p.date)).size} 天`;
+  $('#s-scored').textContent = `占 ${pct(n)}%`;
+  $('#s-unscored').textContent = (POSTS.length - n) ? '还没打分' : '全部评完';
+  $('#s-avg').textContent = '0–10 分制';
+  $('#s-high').textContent = n ? `占已评 ${Math.round(high / n * 100)}%` : '—';
+  $('#b-total').style.width = '100%';
+  $('#b-scored').style.width = pct(n) + '%';
+  $('#b-unscored').style.width = pct(POSTS.length - n) + '%';
+  $('#b-avg').style.width = Math.round((Number(avg) || 0) * 10) + '%';
+  $('#b-high').style.width = pct(high) + '%';
+  $('#meta-line').textContent = `${fmt(POSTS.length)} 条对标帖 · 已评 ${fmt(n)} 条 · 均分 ${avg}` + (syncedAt ? ` · ${syncedAt}` : '');
 }
 
 /* ---------- 图表 ---------- */
 const SVG_NS = 'http://www.w3.org/2000/svg';
-const svgEl = (tag, attrs) => { const n = document.createElementNS(SVG_NS, tag); Object.entries(attrs || {}).forEach(([k, v]) => n.setAttribute(k, v)); return n; };
+const svgEl = (tag, attrs) => {
+  const n = document.createElementNS(SVG_NS, tag);
+  Object.entries(attrs || {}).forEach(([k, v]) => n.setAttribute(k, v));
+  return n;
+};
+const svgTitle = text => {
+  const t = document.createElementNS(SVG_NS, 'title');
+  t.textContent = text;
+  return t;
+};
 
-function bars(host, data, color) {
-  const max = Math.max(1, ...data.map(d => d.value));
-  const h = 80, gap = 4, w = 240;
-  const bw = Math.max(4, (w - gap * (data.length - 1)) / Math.max(1, data.length));
-  const svg = svgEl('svg', { viewBox: `0 0 ${w} ${h + 26}` });
+function vbarChart(host, data, opts = {}) {
+  const W = 520, H = 150, padL = 26, padR = 10, padT = 12, padB = 22;
+  const total = data.reduce((a, d) => a + d.value, 0);
+  const peak = Math.max(1, ...data.map(d => d.value));
+  const mag = Math.pow(10, Math.floor(Math.log10(peak)));
+  const raw = peak / mag;
+  const ladder = [1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10];
+  const max = (ladder.find(v => v >= raw) || 10) * mag;
+  const iw = W - padL - padR, ih = H - padT - padB;
+  const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, 'aria-label': opts.label || '图表' });
+  [0, 0.5, 1].forEach(f => {
+    const y = padT + ih - f * ih;
+    svg.append(svgEl('line', { x1: padL, x2: W - padR, y1: y, y2: y, stroke: f ? 'rgba(255,255,255,.06)' : 'rgba(255,255,255,.12)' }));
+    const t = svgEl('text', { x: padL - 6, y: y + 3, 'text-anchor': 'end', 'font-size': 8.5, fill: '#6f6f6f' });
+    t.textContent = Math.round(max * f);
+    svg.append(t);
+  });
+  const n = data.length;
+  const gap = n > 10 ? 4 : 10;
+  const bw = Math.max(3, (iw - gap * (n - 1)) / n);
+  const step = n > 1 ? (iw - bw) / (n - 1) : 0;
   data.forEach((d, i) => {
-    const bh = Math.round((d.value / max) * h);
-    const x = i * (bw + gap);
-    svg.append(svgEl('rect', { x, y: h - bh, width: bw, height: Math.max(bh, d.value ? 2 : 0), rx: 2, fill: d.color || color }));
-    const t = svgEl('text', { x: x + bw / 2, y: h + 12, 'text-anchor': 'middle', 'font-size': '8', fill: '#8b949e' });
-    t.textContent = d.label; svg.append(t);
-    if (d.value) {
-      const v = svgEl('text', { x: x + bw / 2, y: h - bh - 3, 'text-anchor': 'middle', 'font-size': '8', fill: '#8b949e' });
-      v.textContent = d.value; svg.append(v);
+    const bh = d.value ? Math.max(Math.round((d.value / max) * ih), 2) : 0;
+    const x = padL + i * step;
+    const rect = svgEl('rect', {
+      x, y: padT + ih - bh, width: bw, height: bh,
+      rx: Math.min(3, bw / 2), fill: d.color || opts.color || '#3b82f6',
+    });
+    rect.append(svgTitle(`${d.label} 分：${fmt(d.value)} 条`));
+    svg.append(rect);
+    if (opts.showValues && d.value) {
+      const v = svgEl('text', { x: x + bw / 2, y: padT + ih - bh - 4, 'text-anchor': 'middle', 'font-size': 8.5, fill: '#8a8a8a' });
+      v.textContent = d.value;
+      svg.append(v);
     }
+    const t = svgEl('text', { x: x + bw / 2, y: H - 7, 'text-anchor': 'middle', 'font-size': 8.5, fill: '#6f6f6f' });
+    t.textContent = d.label;
+    svg.append(t);
   });
   host.replaceChildren(svg);
 }
 
-function donut(host, data) {
-  const total = data.reduce((s, d) => s + d.value, 0) || 1;
-  const svg = svgEl('svg', { viewBox: '0 0 120 120' });
-  const r = 44, cx = 60, cy = 60, c = 2 * Math.PI * r;
-  let offset = 0;
+function donutChart(host, data, total, centerLabel) {
+  const S = 132, r = 52, w = 13, c = 2 * Math.PI * r;
+  const svg = svgEl('svg', { viewBox: `0 0 ${S} ${S}`, 'aria-label': '评分进度' });
+  svg.append(svgEl('circle', { cx: S / 2, cy: S / 2, r, fill: 'none', stroke: 'rgba(255,255,255,.07)', 'stroke-width': w }));
+  let off = 0;
   data.forEach(d => {
     if (!d.value) return;
-    svg.append(svgEl('circle', {
-      cx, cy, r, fill: 'none', stroke: d.color, 'stroke-width': 14,
-      'stroke-dasharray': `${(d.value / total) * c} ${c}`, 'stroke-dashoffset': -offset,
-      transform: `rotate(-90 ${cx} ${cy})`
-    }));
-    offset += (d.value / total) * c;
+    const len = (d.value / total) * c;
+    const seg = svgEl('circle', {
+      cx: S / 2, cy: S / 2, r, fill: 'none', stroke: d.color, 'stroke-width': w,
+      'stroke-dasharray': `${Math.max(len - 2.5, 0.6)} ${c}`,
+      'stroke-dashoffset': -off,
+      transform: `rotate(-90 ${S / 2} ${S / 2})`,
+      'stroke-linecap': 'round',
+    });
+    seg.append(svgTitle(`${d.label}：${fmt(d.value)}`));
+    off += len;
+    svg.append(seg);
   });
-  const center = svgEl('text', { x: cx, y: cy, 'text-anchor': 'middle', 'dominant-baseline': 'central', fill: '#e6edf3', 'font-size': '18', 'font-weight': '600' });
-  center.textContent = Math.round((data[0].value / total) * 100) + '%';
-  svg.append(center);
-  host.replaceChildren(svg);
+  const pct = Math.round((data[0].value / total) * 100);
+  const big = svgEl('text', { x: S / 2, y: S / 2 - 1, 'text-anchor': 'middle', 'dominant-baseline': 'central', class: 'donut-center' });
+  big.textContent = pct + '%';
+  const unit = svgEl('text', { x: S / 2, y: S / 2 + 16, 'text-anchor': 'middle', class: 'donut-sub' });
+  unit.textContent = centerLabel || '已评';
+  svg.append(big, unit);
+
   const legend = el('div', 'legend');
   data.forEach(d => {
-    const s = el('span'); const i = el('i'); i.style.background = d.color;
-    s.append(i, document.createTextNode(`${d.label} ${d.value}`)); legend.append(s);
+    const row = el('div', 'row');
+    const dot = el('i');
+    dot.style.background = d.color;
+    row.append(dot, document.createTextNode(d.label), el('b', null, fmt(d.value)),
+      el('span', 'pct', Math.round(d.value / total * 100) + '%'));
+    legend.append(row);
   });
-  host.append(legend);
+  const wrap = el('div', 'donut-wrap');
+  wrap.append(svg, legend);
+  host.replaceChildren(wrap);
 }
 
 function renderCharts() {
   const buckets = Array.from({ length: 11 }, (_, i) => ({ label: String(i), value: 0 }));
   POSTS.forEach(p => { const s = scoreOf(p.id); if (s !== null) buckets[s].value += 1; });
-  if (!POSTS.some(p => scoreOf(p.id) !== null)) {
-    $('#ch-score').replaceChildren(el('div', 'empty', '还没有评分：点下面的 0–10'));
-  } else {
-    bars($('#ch-score'), buckets, '#1f6feb');
-  }
+  const colorFor = i => i <= 2 ? '#f87171' : i <= 4 ? '#fb923c' : i <= 6 ? '#eab308' : i <= 8 ? '#3b82f6' : '#34d399';
+  buckets.forEach((b, i) => { b.color = colorFor(i); });
   const { n } = stats();
-  donut($('#ch-progress'), [
-    { label: '已评', value: n, color: '#3fb950' },
-    { label: '未评', value: POSTS.length - n, color: '#30363d' }
-  ]);
+  if (!n) {
+    $('#ch-score').replaceChildren(el('div', 'empty', '还没有评分：点下面的 0–10 给对标帖打分'));
+    $('#h-score').textContent = '';
+  } else {
+    vbarChart($('#ch-score'), buckets, { showValues: true, label: '评分分布' });
+    $('#h-score').textContent = `${fmt(n)} 条已评 · 均分 ${stats().avg}`;
+  }
+  donutChart($('#ch-progress'), [
+    { label: '已评', value: n, color: '#34d399' },
+    { label: '未评', value: POSTS.length - n, color: '#4d4d4d' },
+  ], POSTS.length || 1, '已评');
+  $('#h-progress').textContent = `${fmt(POSTS.length - n)} 条未评`;
 }
 
 /* ---------- 卡片 ---------- */
