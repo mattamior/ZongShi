@@ -6,7 +6,7 @@
   --r:10px; --r-sm:8px;
 }
 *{box-sizing:border-box}
-html,body{background:var(--bg)}
+html,body{background:var(--bg);overflow-x:hidden;overflow-x:clip}
 body{
   margin:0;color:var(--fg);
   font:14px/1.55 -apple-system,"SF Pro Text","PingFang SC",system-ui,sans-serif;
@@ -106,7 +106,7 @@ button.primary:hover{background:#2f74e0;border-color:#2f74e0}
 
 /* ---------- 卡片列表 ---------- */
 main{max-width:1560px;margin:0 auto;padding:14px 24px 90px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
-@media(max-width:1080px){main{grid-template-columns:1fr}}
+@media(max-width:1080px){main{grid-template-columns:minmax(0,1fr)}}
 .card{min-width:0;background:var(--card);border:1px solid var(--line2);border-radius:var(--r);padding:15px 17px;outline:none;transition:border-color .12s,background .12s,opacity .12s}
 .card:hover{border-color:var(--line)}
 .card:focus{border-color:rgba(59,130,246,.6)}

@@ -2,6 +2,7 @@
 """生成对标账号评分页：把 298 条原创帖渲染成可打 0–10 分的页面。"""
 from __future__ import annotations
 
+import hashlib
 import json
 import pathlib
 from datetime import datetime, timezone
@@ -26,6 +27,8 @@ def main() -> None:
     out.sort(key=lambda x: x["ts"])
     tpl = (ROOT / "target_template.html").read_text(encoding="utf-8")
     html = tpl.replace("__DATA__", json.dumps(out, ensure_ascii=False))
+    css_ver = hashlib.sha1((ROOT / "style.css").read_bytes()).hexdigest()[:8]
+    html = html.replace('href="style.css"', f'href="style.css?v={css_ver}"')
     (ROOT / "target.html").write_text(html, encoding="utf-8")
     print(f"wrote site/target.html  posts={len(out)}  bytes={len(html.encode())}")
 

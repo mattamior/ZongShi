@@ -2,6 +2,7 @@
 """把 data/drafts 下所有日期的稿件渲染成一个审稿页（数据内嵌，不依赖 fetch）。"""
 from __future__ import annotations
 
+import hashlib
 import json
 import pathlib
 import re
@@ -96,6 +97,8 @@ def main() -> None:
     rows = gather()
     tpl = (ROOT / "template.html").read_text(encoding="utf-8")
     html = tpl.replace("__DATA__", json.dumps(rows, ensure_ascii=False))
+    css_ver = hashlib.sha1((ROOT / "style.css").read_bytes()).hexdigest()[:8]
+    html = html.replace('href="style.css"', f'href="style.css?v={css_ver}"')
     (ROOT / "index.html").write_text(html, encoding="utf-8")
     print(f"wrote site/index.html  posts={len(rows)}  dates={len({r['date'] for r in rows})}  bytes={len(html.encode())}")
 
