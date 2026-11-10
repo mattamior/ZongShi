@@ -33,16 +33,19 @@
     <div class="kpi"><div class="k-label">均分</div><div class="k-num" id="c-avg">—</div><div class="k-sub" id="s-avg">—</div><div class="bar"><i id="b-avg"></i></div></div>
     <div class="kpi"><div class="k-label">7 分以上</div><div class="k-num dup" id="c-high">0</div><div class="k-sub" id="s-high">—</div><div class="bar"><i class="dup" id="b-high"></i></div></div>
   </section>
+  <details class="stats" id="stats" open>
+    <summary><span>统计</span><span class="sum-meta" id="sum-meta"></span></summary>
   <section class="charts" style="grid-template-columns:1.55fr 1fr">
     <div class="chartcard"><div class="ch-head"><h3>评分分布</h3><span class="hint" id="h-score"></span></div><div class="ch-body" id="ch-score"></div></div>
     <div class="chartcard"><div class="ch-head"><h3>评分进度</h3><span class="hint" id="h-progress"></span></div><div class="ch-body" id="ch-progress"></div></div>
   </section>
+  </details>
 </div>
 
 <div class="toolbar-wrap">
   <div class="toolbar">
     <input type="search" id="q" placeholder="搜正文">
-    <select id="f-score">
+    <div class="selbar"><select id="f-score">
       <option value="">全部分数</option>
       <option value="un">未评分</option>
       <option value="high">9–10</option>
@@ -56,11 +59,12 @@
       <option value="score">按分数</option>
       <option value="views">按展示</option>
     </select>
-    <button id="autofill">按展示补分</button>
+    </div>
+    <div class="actbar"><button id="autofill">按展示补分</button>
     <button id="save" class="primary">保存到仓库</button>
     <button id="export">导出评分</button>
     <button id="import">导入评分</button>
-    <button id="reset">重置</button>
+    <button id="reset">重置</button></div>
     <input type="file" id="file" accept="application/json" hidden>
   </div>
 </div>
@@ -177,7 +181,9 @@ function updateCounters() {
   $('#b-unscored').style.width = pct(POSTS.length - n) + '%';
   $('#b-avg').style.width = Math.round((Number(avg) || 0) * 10) + '%';
   $('#b-high').style.width = pct(high) + '%';
-  $('#meta-line').textContent = `${fmt(POSTS.length)} 条对标帖 · 已评 ${fmt(n)} 条 · 均分 ${avg}` + (syncedAt ? ` · ${syncedAt}` : '');
+  $('#meta-line').textContent = `${fmt(POSTS.length)} 条对标帖 · 已评 ${fmt(n)} 条 · 均分 ${avg}`;
+  const sum = $('#sum-meta');
+  if (sum) sum.textContent = `均分 ${avg} · 已评 ${n}/${POSTS.length}`;
 }
 
 /* ---------- 图表 ---------- */
@@ -371,6 +377,7 @@ function applyFilter() {
 }
 
 /* ---------- 启动 ---------- */
+if (matchMedia('(max-width:760px)').matches) $('#stats').open = false;
 const list = $('#list');
 const frag = document.createDocumentFragment();
 (async () => {

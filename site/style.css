@@ -54,6 +54,8 @@ h1{margin:0;font-size:16px;font-weight:650;letter-spacing:-.01em;white-space:now
 @media(max-width:720px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 /* 图表 */
+details.stats>summary{display:none;list-style:none}
+details.stats>summary::-webkit-details-marker{display:none}
 .charts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:12px}
 .chartcard{background:var(--card);border:1px solid var(--line2);border-radius:var(--r);padding:14px 16px 12px;display:flex;flex-direction:column;min-height:196px}
 .ch-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:10px}
@@ -99,12 +101,13 @@ button:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.18)
 button.primary{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:500}
 button.primary:hover{background:#2f74e0;border-color:#2f74e0}
 .chk{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--dim);white-space:nowrap;padding:0 4px}
+.selbar,.actbar{display:contents}
 .chk input{accent-color:var(--acc);margin:0}
 
 /* ---------- 卡片列表 ---------- */
 main{max-width:1560px;margin:0 auto;padding:14px 24px 90px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
 @media(max-width:1080px){main{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--line2);border-radius:var(--r);padding:15px 17px;outline:none;transition:border-color .12s,background .12s,opacity .12s}
+.card{min-width:0;background:var(--card);border:1px solid var(--line2);border-radius:var(--r);padding:15px 17px;outline:none;transition:border-color .12s,background .12s,opacity .12s}
 .card:hover{border-color:var(--line)}
 .card:focus{border-color:rgba(59,130,246,.6)}
 .card.used{border-color:rgba(52,211,153,.35)}
@@ -136,8 +139,8 @@ main{max-width:1560px;margin:0 auto;padding:14px 24px 90px;display:grid;grid-tem
 .imgbtns{display:flex;gap:6px;flex-wrap:wrap}
 .imgbtns button{height:26px;font-size:11.5px;padding:0 9px}
 .empty{font-size:12px;color:var(--dim2);border:1px dashed var(--line);border-radius:var(--r-sm);padding:22px 10px;text-align:center}
-.srcrow{margin-top:9px;font-size:11.5px;color:var(--dim2);display:flex;gap:6px;align-items:baseline;min-height:16px}
-.srcrow a{color:var(--dim);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-bottom:1px solid transparent}
+.srcrow{margin-top:9px;font-size:11.5px;color:var(--dim2);display:flex;gap:6px;align-items:baseline;min-height:16px;overflow:hidden}
+.srcrow a{color:var(--dim);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border-bottom:1px solid transparent;min-width:0}
 .srcrow a:hover{color:var(--acc);border-bottom-color:rgba(59,130,246,.4)}
 .cardfoot{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-top:10px}
 .actions{display:flex;gap:6px;margin-top:10px}
@@ -161,12 +164,63 @@ main{max-width:1560px;margin:0 auto;padding:14px 24px 90px;display:grid;grid-tem
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 #toast.err{border-color:rgba(248,113,113,.5);color:#fca5a5}
 
+/* ---------- 手机 ---------- */
 @media(max-width:760px){
-  .appbar .row1{padding:10px 14px;gap:10px}
-  .shell{padding:12px 14px 0}
-  .toolbar{padding:8px 14px}
-  main{padding:12px 14px 80px}
-  .imgcol{width:120px;flex:0 0 120px}
-  .text{font-size:14.5px}
-  .k-num{font-size:26px}
+  .appbar{position:static}
+  .appbar .row1{flex-wrap:wrap;padding:10px 14px;row-gap:6px;column-gap:10px}
+  .mark{order:1}
+  .titles{order:2;flex:1 1 auto;min-width:0}
+  h1{font-size:15px}
+  .titles .meta{font-size:11px;max-width:100%}
+  .appbar .right{order:3;margin-left:auto;gap:8px}
+  .chip{font-size:11px;padding:2px 8px}
+  .navlinks{order:4;flex:1 1 100%;margin-left:0;gap:6px;border-top:1px solid var(--line2);padding-top:6px}
+  .navlinks a{white-space:nowrap;font-size:13px;padding:4px 9px}
+
+  .shell{padding:10px 12px 0}
+  .kpis{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+  .kpis::-webkit-scrollbar{display:none}
+  .kpi{flex:0 0 124px;padding:11px 12px 10px}
+  .k-num{font-size:24px}
+  .k-label{font-size:11.5px}
+  .k-sub{font-size:10.5px}
+  .bar{margin-top:8px}
+
+  details.stats{margin-top:10px}
+  details.stats>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--card);border:1px solid var(--line2);border-radius:var(--r);padding:11px 13px;font-size:12.5px;color:var(--fg);cursor:pointer}
+  details.stats>summary .sum-meta{color:var(--dim2);font-size:11.5px;margin-left:auto}
+  details.stats>summary::after{content:'展开';font-size:11.5px;color:var(--acc);padding-left:10px}
+  details.stats[open]>summary::after{content:'收起'}
+  details.stats[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius:0;border-bottom-color:transparent;margin-bottom:-1px}
+  .charts{grid-template-columns:1fr;gap:10px;margin-top:10px}
+  details.stats>summary+.charts{margin-top:8px}
+  .chartcard{padding:12px 14px 10px;min-height:0}
+  .ch-body svg{height:auto}
+  .donut-wrap{gap:12px}
+  .donut-wrap svg{width:120px;height:120px;flex:0 0 120px}
+  .hlist .row{grid-template-columns:46px 1fr 32px;gap:8px}
+
+  .toolbar-wrap{position:static;margin-top:10px}
+  .toolbar{flex-wrap:wrap;overflow:visible;padding:8px 12px;gap:7px}
+  .toolbar input[type=search]{flex:1 1 100%;min-width:0;height:32px}
+  .toolbar .selbar,.toolbar .actbar{display:flex;flex:1 1 100%;gap:7px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+  .selbar::-webkit-scrollbar,.actbar::-webkit-scrollbar{display:none}
+  .selbar select{flex:0 0 auto;width:118px;height:32px}
+  .actbar button{flex:0 0 auto;height:32px;padding:0 11px}
+  .chk{flex:1 1 100%;padding:2px 0}
+
+  main{grid-template-columns:minmax(0,1fr);padding:10px 12px 70px;gap:10px}
+  .card{padding:12px 13px}
+  .text{font-size:15px;line-height:1.72}
+  .imgcol{width:110px;flex:0 0 110px}
+  .actions{flex-wrap:wrap;gap:6px}
+  .actions button{height:30px;padding:0 11px}
+  .rate{gap:2px}
+  .rate button{width:24px;height:24px;font-size:11px}
+  #toast{left:12px;right:12px;transform:none;bottom:14px;text-align:center}
+  #toast.show{transform:none}
+}
+@media(max-width:400px){
+  .head{font-size:11px;gap:4px}
+  .badge{font-size:10.5px;padding:1px 6px}
 }

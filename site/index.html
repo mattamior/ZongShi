@@ -33,28 +33,32 @@
     <div class="kpi"><div class="k-label">重复</div><div class="k-num dup" id="c-dup">0</div><div class="k-sub" id="s-dup">—</div><div class="bar"><i class="dup" id="b-dup"></i></div></div>
     <div class="kpi"><div class="k-label">未处理</div><div class="k-num" id="c-pend">0</div><div class="k-sub" id="s-pend">—</div><div class="bar"><i id="b-pend"></i></div></div>
   </section>
+  <details class="stats" id="stats" open>
+    <summary><span>统计</span><span class="sum-meta" id="sum-meta"></span></summary>
   <section class="charts">
     <div class="chartcard"><div class="ch-head"><h3>状态分布</h3><span class="hint" id="h-state"></span></div><div class="ch-body" id="ch-state"></div></div>
     <div class="chartcard"><div class="ch-head"><h3>按日期</h3><span class="hint" id="h-date"></span></div><div class="ch-body" id="ch-date"></div></div>
     <div class="chartcard"><div class="ch-head"><h3>题材 Top 8</h3><span class="hint" id="h-tag"></span></div><div class="ch-body" id="ch-tag"></div></div>
     <div class="chartcard"><div class="ch-head"><h3>字数分布</h3><span class="hint" id="h-len"></span></div><div class="ch-body" id="ch-len"></div></div>
   </section>
+  </details>
 </div>
 
 <div class="toolbar-wrap">
   <div class="toolbar">
     <input type="search" id="q" placeholder="搜正文 / 编号 / 来源">
-    <select id="f-date"><option value="">全部日期</option></select>
+    <div class="selbar"><select id="f-date"><option value="">全部日期</option></select>
     <select id="f-state"><option value="">全部状态</option><option value="pending">未处理</option><option value="used">已用</option><option value="rejected">废弃</option><option value="duplicate">重复</option><option value="edited">已改</option></select>
     <select id="f-origin"><option value="">全部来源</option><option value="选定">选定</option><option value="备选">备选</option><option value="池">池</option></select>
     <select id="f-tag"><option value="">全部题材</option></select>
     <select id="f-hour"><option value="">全部时段</option></select>
+    </div>
     <label class="chk" title="同一段正文出现多次时，只留优先级最高的一条"><input type="checkbox" id="hide-dup" checked> 隐藏重复</label>
-    <button id="copy-used">复制已用</button>
+    <div class="actbar"><button id="copy-used">复制已用</button>
     <button id="export">导出</button>
     <button id="save">保存到仓库</button>
     <button id="import">导入</button>
-    <button id="reset">重置</button>
+    <button id="reset">重置</button></div>
     <input type="file" id="file" accept="application/json" hidden>
   </div>
 </div>
@@ -214,7 +218,9 @@ function updateCounters() {
   $('#b-pend').style.width = pct(pend) + '%';
   const days = new Set(POSTS.map(p => p.date)).size;
   $('#meta-line').textContent =
-    `${fmt(POSTS.length)} 条候选 · ${days} 天 · 显示 ${fmt(shown)} 条` + (syncedAt ? ` · ${syncedAt}` : '');
+    `${fmt(POSTS.length)} 条候选 · ${days} 天 · 显示 ${fmt(shown)} 条`;
+  const sum = $('#sum-meta');
+  if (sum) sum.textContent = `已用 ${used} · 废弃 ${rej} · 重复 ${dup} · 未处理 ${pend}`;
 }
 
 /* ---------- 图表 ---------- */
@@ -531,6 +537,7 @@ function applyFilter() {
 }
 
 /* ---------- 启动 ---------- */
+if (matchMedia('(max-width:760px)').matches) $('#stats').open = false;
 const list = $('#list');
 const frag = document.createDocumentFragment();
 (async () => {

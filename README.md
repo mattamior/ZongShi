@@ -60,6 +60,7 @@ npx wrangler pages deploy site/dist --project-name zongshi-review
 - 单条想指定配图：在 `data/drafts/image_overrides.json` 里加 `"<id>": {"q": "搜索关键词", "credit": "百度图片"}`（也可用 `url` 钉死），再跑 `fetch_images.py`。
 - 配图是新闻图：先取原文 `og:image`，取不到用图片搜索兜底，仍没有就不配图（日常观察类本来没有）。图片放正文右侧、点击看大图，图下标注「原文 / 百度图片（非原文配图）」；**「复制图片」与正文「复制」是两颗独立按钮**。
 - 状态（已用/废弃/改动/配图）存在浏览器 localStorage；点「保存到仓库」直接把 `data/drafts/review.json` 写进仓库（需要 `site/serve.py`），也可「导出」下载。
+- 手机（≤760 px）：顶栏两行不吸顶、数字卡横滑、图表默认收进「统计」、筛选条与按钮各自横滑、列表单列。
 - 页面排版与图表对齐 mt.ai 看板：顶栏 + 状态徽章、KPI 数字卡（带占比进度条）、四张带坐标轴的图表（状态环图 / 按日期 / 题材排行 / 字数分布）、吸顶工具栏、两栏稿件列表；评分页同款。图表是自绘 SVG，不引图表库。
 - 状态（已用/废弃/重复/改动/配图/评分）**双向同步**：页面启动先 `GET /api/state` 拉线上状态，之后每次标记都会 `POST /api/state` 写回（800ms 防抖）。线上由 `site/worker.js`（部署成 `_worker.js`）+ KV `ZS_STATE` 承载；本地 `site/serve.py` 提供同形状接口，直接读写仓库文件。localStorage 只是离线缓存。
 - 仓库 ↔ 线上用 `scripts/sync_state.py`：`pull` 把线上状态并回 `data/drafts/review.json` 与 `data/eval/target-ratings.json`（保留原有顺序，只追加新 id）；`push` 把仓库状态推到线上（`--replace` 整段覆盖）。`show` 只看线上摘要。
