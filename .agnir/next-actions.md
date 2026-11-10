@@ -4,10 +4,11 @@
 
 1. **交接未完成，周一（2026-11-09）继续**（Principal 2026-11-07 确认）。本次只同步文档；不据此启动账号运营或创建定时任务。
 2. 周一从 `HANDOVER.md` 继续：确认 mt.ai 接管进度、实际环境与账号 `@MattDjj`。内容方向已定为**时政 / 日常评论**，不再作为待拍板项。旧机器路径、Chrome 窗口 ID 与 11-06 的 403 / 404 / 422 结果需要按实际环境核对。
-3. 稿件：`data/drafts/2026-11-09-batch.{jsonl,md}` 384 条已审完（已用 57 / 重复 24 / 废弃 349，见 `review.json`）；晚场新增 `2026-11-09-r2`（24 条）、`r3`（100 条，社会/时政/民生 80%）待 Principal 挑。审稿站 https://zs.lapplax.com（线上标状态只存 localStorage，用「导出」拿回；「保存到仓库」仅本地 `site/serve.py` 可用）。挑完再定发什么，均**未发布、未排期**。
-4. 接管优先复用 mt.ai，勿重复建设发送闭环；`follow_back.py` 已废弃，勿用。`PLAN.md` 的早期回复策略与高频配额不作为当前执行参数。
-5. 若继续生成时事稿，再手动运行 `python3 scripts/fetch_news.py --output-dir data/news` 获取当日来源；硬拦截后用 `analyze_gap.py` 回查分布。检查通过不代表事实已核实或允许自动发布。
-6. 运营恢复后的效果回收需区分帖子互动、账号粉丝变化与曝光缺失；旧快照不代表当前指标，不能据此确认增长归因或接管完成。
+3. 对标账号：新增 @btcmos（514 条，窗口 2026-10-20 → 11-10）已在评分页，**0 条评分**；需要它参与起草时先评分/按展示补分，再跑 `python3 scripts/style_priority.py data/eval/target-ratings.json`。页面已部署到 `https://zs.lapplax.com/target.html`，线上页签 812 / 298 / 514 实测正常。
+4. 稿件：`data/drafts/2026-11-09-batch.{jsonl,md}` 384 条已审完（已用 57 / 重复 24 / 废弃 349，见 `review.json`）；晚场新增 `2026-11-09-r2`（24 条）、`r3`（100 条，社会/时政/民生 80%）待 Principal 挑。审稿站 https://zs.lapplax.com（线上标状态只存 localStorage，用「导出」拿回；「保存到仓库」仅本地 `site/serve.py` 可用）。挑完再定发什么，均**未发布、未排期**。
+5. 接管优先复用 mt.ai，勿重复建设发送闭环；`follow_back.py` 已废弃，勿用。`PLAN.md` 的早期回复策略与高频配额不作为当前执行参数。
+6. 若继续生成时事稿，再手动运行 `python3 scripts/fetch_news.py --output-dir data/news` 获取当日来源；硬拦截后用 `analyze_gap.py` 回查分布。检查通过不代表事实已核实或允许自动发布。
+7. 运营恢复后的效果回收需区分帖子互动、账号粉丝变化与曝光缺失；旧快照不代表当前指标，不能据此确认增长归因或接管完成。
 
 ## 已完成与停止追补
 

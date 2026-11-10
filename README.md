@@ -1,10 +1,11 @@
 # ZongShi — X 账号风格研究与内容工作台
 
-本仓库研究 X 账号 [@FKFKFKFKFKTB](https://x.com/FKFKFKFKFKTB)（高水水（互～））的**发帖**风格，产出可复算的规范、生成提示词与稿件，并保留真实账号的发布匹配、互动和指标回收工具。回复语料只作背景，不进入发帖规范。
+本仓库研究 X 对标账号的**发帖**风格，产出可复算的规范、生成提示词与稿件，并保留真实账号的发布匹配、互动和指标回收工具。回复语料只作背景，不进入发帖规范。当前对标账号两个：[高水水（互～）](https://x.com/FKFKFKFKFKTB)（主对标，时政 / 八卦 / 日常）与 [香港老雷](https://x.com/btcmos)（2026-11-10 新增，美股 / BTC / AI）。
 
-## 当前状态（2026-11-07 同步）
+## 当前状态（2026-11-10 同步）
 
-- 研究主线 P0–P2 已完成：可取得的原创帖语料共 **298 条**，覆盖 2026-10-20 至 11-06；已产出规范与自评样稿。账号更早的原创帖未取得，已停止追补，不宣称覆盖全部历史。
+- 研究主线 P0–P2 已完成：主对标可取得的原创帖语料共 **298 条**，覆盖 2026-10-20 至 11-06；已产出规范与自评样稿。账号更早的原创帖未取得，已停止追补，不宣称覆盖全部历史。
+- 第二个对标账号 **@btcmos（香港老雷，61.8k 粉丝）** 于 2026-11-10 加入：采集 2026-10-20 至 11-10 的 **514 条原创帖**（FxTwitter 公开接口），评分页合并展示 812 条；该账号评分为 0 条，尚未参与起草参考。
 - 已有真实账号的内容与台账：2026-11-06 交接记录中的昵称为 **lapplax**、handle 为 **@MattDjj**；原计划 `ZongShi（互～） / AI 弄潮儿` 已作废。账号资料、指标及接口可用性均为历史快照，本次未在线复测。
 - 目标是将该号的发帖、互动与增长交由 **mt.ai** 接管；内容方向已定为**时政 / 日常评论**，增长为首要目的。
 - **交接尚未完成，周一（2026-11-09）继续**（用户 2026-11-07 确认）。接管说明见 [HANDOVER.md](HANDOVER.md)。现有脚本和历史动作记录不能视为接管已完成或当前自动化正在运行。
@@ -17,6 +18,7 @@
 | [style/prompt.md](style/prompt.md) | 帖子生成提示词与配比自检要求 |
 | [style/new-account.json](style/new-account.json) | 账号接口资料、已作废的人设方案与身份边界 |
 | [data/target/posts-merged/posts.jsonl](data/target/posts-merged/posts.jsonl) | 去重后的 298 条原创帖；同目录保留 `post-stats.json` |
+| [data/target/accounts.json](data/target/accounts.json)、[data/target/btcmos-20261110/](data/target/btcmos-20261110/) | 对标账号清单；@btcmos 的 514 条原创帖、原始分页与采集元数据 |
 | [data/target/20261105T-posts/](data/target/20261105T-posts/)、[data/target/20261105T1052Z/](data/target/20261105T1052Z/)、[data/target/timeline-api/](data/target/timeline-api/) | 镜像与登录态时间线采集留档；均有覆盖边界 |
 | [data/eval/](data/eval/)、[guard/banned.md](guard/banned.md)、[guard/check_text.py](guard/check_text.py) | 三批样稿、自评报告与出稿前硬拦截 |
 | [data/drafts/](data/drafts/) | 稿件库；每条用「`### id 时段·模板·字数` + 代码块」排版，便于整条复制；稿件日期不证明已排期或已发布 |
@@ -24,7 +26,7 @@
 | [scripts/match_published.py](scripts/match_published.py)、[data/scheduled/published.jsonl](data/scheduled/published.jsonl) | 已发帖与稿件匹配；现有台账仅覆盖当时首屏可见的 4 条 |
 | [scripts/collect_metrics.py](scripts/collect_metrics.py)、[data/metrics/snapshots.jsonl](data/metrics/snapshots.jsonl) | 帖子互动与账号指标历史快照；查看数可能缺失 |
 | [scripts/engage.py](scripts/engage.py)、[data/growth/](data/growth/) | 已有搜索扫描、点赞、关注工具和历史台账；回关工具 `follow_back.py` 已废弃，勿用 |
-| [site/](site/) | 审稿站：`index.html` 审全部历史稿件（四态标记、标签出处、配图、顶部图表、导入导出），`target.html` 给对标账号 298 条帖子打 0–10 分 |
+| [site/](site/) | 审稿站：`index.html` 审全部历史稿件（四态标记、标签出处、配图、顶部图表、导入导出），`target.html` 给两个对标账号共 812 条帖子打 0–10 分（账号页签切换） |
 | [HANDOVER.md](HANDOVER.md) | mt.ai 接管说明、历史技术限制与未决问题 |
 | [PLAN.md](PLAN.md) | 当前进度摘要与早期方案；历史回复策略、配额不作为当前执行参数 |
 
@@ -43,7 +45,7 @@ python3 guard/check_text.py --file data/drafts/2026-11-07_08.jsonl
 
 ```bash
 python3 site/fetch_images.py               # 抓新闻配图（原文 og:image 优先，取不到用图片搜索兜底）
-python3 site/build_target.py               # 生成对标账号评分页 site/target.html（298 条，0–10 分）
+python3 site/build_target.py               # 生成对标账号评分页 site/target.html（读 accounts.json，当前 812 条）
 python3 site/plan_dedupe.py                # 按正文去重：逐字或几乎一样的帖子只留一条，其余标记「重复」
 python3 site/build_site.py                 # 读 data/drafts/*.jsonl，生成 site/index.html（数据内嵌）
 python3 site/serve.py 8777                  # 静态服务 + GET/POST /api/state + POST /save（直接写仓库文件）
@@ -71,9 +73,10 @@ npx wrangler pages deploy site/dist --project-name zongshi-review
 
 ## 对标账号评分（site/target.html）
 
-- 298 条原创帖逐条打 0–10 分，状态存 `localStorage: zs-target-ratings`，可导出 `target-ratings.json`。
-- 没耐心逐条打时点「按展示补分」：只补未评分的，>10000 展示记 5 分、1000–10000 记 4 分、≤1000 记 1 分；已评的不动。也可以把导出文件给我，跑 `python3 scripts/fill_ratings.py <导出.json>` 服务端合并（结果 `data/eval/target-ratings-filled.json`）。
-- 点「保存到仓库」会把 `data/eval/target-ratings.json` 直接写进仓库（需要 `site/serve.py`）；也可导出后手动放。拿到后，跑 `python3 scripts/style_priority.py data/eval/target-ratings.json`，生成 `data/eval/target-priority.json`：按分数排序的正文 + 高分帖的长度/行数/问句/带图画像。
+- 账号页签「全部 / 高水水（互～） / 香港老雷」切换范围，KPI 与图表跟着变；每张卡带账号徽章。当前共 812 条（主对标 298 + 香港老雷 514），逐条打 0–10 分，状态存 `localStorage: zs-target-ratings`，可导出 `target-ratings.json`。
+- 新增对标账号：往 `data/target/accounts.json` 加一条（handle、显示名、原创帖 JSONL），再跑 `python3 site/build_target.py`；采集用 `python3 scripts/collect_target.py --handle <handle> --account-id <id> --since YYYY-MM-DD --output-dir data/target/<name>`。
+- 没耐心逐条打时点「按展示补分」：只补未评分的，用满 1–10 分——≥100 万→10、50–100 万→9、20–50 万→8、10–20 万→7、5–10 万→6、1–5 万→5、1000–1 万→4、100–1000→3、10–100→2、<10→1；已评的不动。也可以把导出文件给我，跑 `python3 scripts/fill_ratings.py <导出.json>`（默认两个账号都补，`--account btcmos` 可限定；结果 `data/eval/target-ratings-filled.json`）。
+- 点「保存到仓库」会把 `data/eval/target-ratings.json` 直接写进仓库（需要 `site/serve.py`）；也可导出后手动放。拿到后，跑 `python3 scripts/style_priority.py data/eval/target-ratings.json`，生成 `data/eval/target-priority.json`：按分数排序的正文 + 高分帖的长度/行数/问句/带图画像；结果按账号分在 `accounts.<key>`，顶层 `ranking` 是合并清单。
 - **起草只参考评分 >4 分的帖子**：`python3 scripts/style_priority.py data/eval/target-ratings.json` 默认按 `--min 4` 过滤，输出里的 `ranking` 就是可参考清单；`profile` 用作长度和句式基准，只统计 ≤90 字的帖子（对标账号少数 300+ 字爆料长文不进基准，`profile_n` 是计入条数）。
 
 ## 已定边界

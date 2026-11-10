@@ -1,0 +1,45 @@
+{
+  "account": {
+    "handle": "btcmos",
+    "id": "1865722200185307136",
+    "display_name": "香港老雷",
+    "profile_url": "https://x.com/btcmos",
+    "reported_status_count_at_capture": 9027,
+    "followers": 61792,
+    "following": 28943,
+    "joined": "Sun Dec 08 11:37:14 +0000 2024"
+  },
+  "source": {
+    "provider": "FxTwitter public API",
+    "endpoint": "https://api.fxtwitter.com/2/profile/id:1865722200185307136/statuses",
+    "parameters": {
+      "count": 100,
+      "with_replies": "0",
+      "profile_ref": "id:1865722200185307136"
+    },
+    "row_semantics": "with_replies=1 embeds the replied-to parent post as an extra row, so each reply consumes two rows; with_replies=0 returns posts plus reposts and no parents.",
+    "client_authentication": "none; no cookies, tokens, or API keys are sent",
+    "raw_pages": "source/pages/page-*.json",
+    "progress": "source/progress.json"
+  },
+  "collection": {
+    "started_at_utc": "2026-11-10T10:38:34.649627+00:00",
+    "finished_at_utc": "2026-11-10T10:39:35.672456+00:00",
+    "page_count": 30,
+    "timeline_rows": 569,
+    "unique_timeline_statuses": 564,
+    "duplicate_rows": 5,
+    "authored_statuses": 560,
+    "reply_count": 46,
+    "original_count": 514,
+    "reposts_excluded": 0,
+    "oldest_timestamp": 1792467472,
+    "newest_timestamp": 1794306668,
+    "reported_vs_observed_ratio": 0.062,
+    "api_cursor_exhausted": false,
+    "termination_reason": "since_reached",
+    "window_since": "2026-10-20",
+    "before_window_dropped": 4
+  },
+  "coverage_note": "termination_reason='since_reached'; api_cursor_exhausted=False. Third-party upstream, not the owner's official export. Deleted, withheld, protected, or upstream-omitted posts may be absent; do not describe this as a guaranteed complete archive."
+}

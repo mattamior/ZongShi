@@ -1,0 +1,25 @@
+{
+  "note": "对标账号清单：site/build_target.py 与 scripts/style_priority.py 都读这里。新增账号只需加一条并准备对应的原创帖 JSONL（FxTwitter status 行格式）。",
+  "accounts": [
+    {
+      "key": "fkfk",
+      "handle": "FKFKFKFKFKTB",
+      "name": "高水水（互～）",
+      "id": "2105258399885844480",
+      "posts": "data/target/posts-merged/posts.jsonl",
+      "color": "#93c5fd",
+      "window": "2026-10-20 → 2026-11-06，298 条",
+      "note": "主对标账号：时政 / 八卦 / 日常短帖；早于 10-20 的原创未采集"
+    },
+    {
+      "key": "btcmos",
+      "handle": "btcmos",
+      "name": "香港老雷",
+      "id": "1865722200185307136",
+      "posts": "data/target/btcmos-20261110/originals.jsonl",
+      "color": "#fbbf24",
+      "window": "2026-10-20 → 2026-11-10，514 条",
+      "note": "新增对标账号：美股 / BTC / 加密合约 / AI；2026-11-10 采集，窗口内原创 514 条"
+    }
+  ]
+}

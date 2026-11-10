@@ -2,6 +2,8 @@
 
 由 [target-style.json](target-style.json) 与 298 条原创帖归纳。复制代码块，替换 `{{事件或现象}}`、`{{可引用的公开来源}}`。
 
+对标账号清单见 `data/target/accounts.json`：主对标 @FKFKFKFKFKTB，另加 @btcmos（美股 / BTC / AI）。除非 Principal 指定，生成仍按主对标口径；`data/eval/target-priority.json` 已按账号分块（`accounts.<key>`），需要切换参考对象时按块取用。
+
 ```text
 你在模仿 X 账号 @FKFKFKFKFKTB 的发帖风格。只输出一条帖子，不要解释。
 

@@ -26,6 +26,7 @@
 </header>
 
 <div class="shell">
+  <nav class="acct-tabs" id="acct-tabs" aria-label="对标账号"></nav>
   <section class="kpis">
     <div class="kpi"><div class="k-label">总数</div><div class="k-num" id="c-total">0</div><div class="k-sub" id="s-total">—</div><div class="bar"><i id="b-total"></i></div></div>
     <div class="kpi"><div class="k-label">已评</div><div class="k-num ok" id="c-scored">0</div><div class="k-sub" id="s-scored">—</div><div class="bar"><i class="ok" id="b-scored"></i></div></div>
@@ -35,7 +36,7 @@
   </section>
   <details class="stats" id="stats" open>
     <summary><span>统计</span><span class="sum-meta" id="sum-meta"></span></summary>
-  <section class="charts" style="grid-template-columns:1.55fr 1fr">
+  <section class="charts charts2">
     <div class="chartcard"><div class="ch-head"><h3>评分分布</h3><span class="hint" id="h-score"></span></div><div class="ch-body" id="ch-score"></div></div>
     <div class="chartcard"><div class="ch-head"><h3>评分进度</h3><span class="hint" id="h-progress"></span></div><div class="ch-body" id="ch-progress"></div></div>
   </section>
@@ -72,7 +73,9 @@
 <div id="toast"></div>
 <script>
 const POSTS = __DATA__;
+const ACCOUNTS = __ACCOUNTS__;
 const KEY = 'zs-target-ratings';
+let acct = '';
 let booting = true;
 let queued = null;
 const st = (() => { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } })();
@@ -144,11 +147,50 @@ const toast = (msg, err) => {
 };
 
 const scoreOf = id => (typeof st[id] === 'number' ? st[id] : null);
+const acctOf = key => ACCOUNTS.find(a => a.key === key);
+const visiblePosts = () => (acct ? POSTS.filter(p => p.acct === acct) : POSTS);
 
-function stats() {
-  const scored = POSTS.filter(p => scoreOf(p.id) !== null);
+function stats(list) {
+  const scored = list.filter(p => scoreOf(p.id) !== null);
   const sum = scored.reduce((s, p) => s + scoreOf(p.id), 0);
   return { n: scored.length, avg: scored.length ? (sum / scored.length).toFixed(1) : '—' };
+}
+
+function renderDates() {
+  const sel = $('#f-date');
+  if (!sel) return;
+  const cur = sel.value;
+  const keep = el('option', null, '全部日期'); keep.value = '';
+  const dates = [...new Set(visiblePosts().map(p => p.date))].sort();
+  sel.replaceChildren(keep, ...dates.map(d => { const o = el('option', null, d); o.value = d; return o; }));
+  if (dates.includes(cur)) sel.value = cur;
+}
+
+function renderTabs() {
+  const host = $('#acct-tabs');
+  if (!host) return;
+  const items = [{ key: '', name: '全部', n: POSTS.length }].concat(
+    ACCOUNTS.map(a => ({ key: a.key, name: a.name, n: POSTS.filter(p => p.acct === a.key).length }))
+  );
+  host.replaceChildren(...items.map(it => {
+    const a = it.key ? (acctOf(it.key) || {}) : {};
+    const b = el('button', 'acct-tab' + (it.key === acct ? ' on' : ''));
+    b.type = 'button';
+    b.append(document.createTextNode(it.name), el('span', 'n', fmt(it.n)));
+    if (a.color) b.style.setProperty('--acct-color', a.color);
+    b.title = it.key
+      ? [a.handle ? '@' + a.handle : '', a.window || '', a.note || ''].filter(Boolean).join(' · ')
+      : '全部账号合并';
+    b.addEventListener('click', () => {
+      acct = it.key;
+      renderTabs();
+      renderDates();
+      renderCharts();
+      updateCounters();
+      applyFilter();
+    });
+    return b;
+  }));
 }
 
 const fmt = n => Number(n).toLocaleString('en-US');
@@ -162,28 +204,32 @@ const setSync = (state, text) => {
 };
 
 function updateCounters() {
-  const { n, avg } = stats();
-  const total = POSTS.length || 1;
-  const high = POSTS.filter(p => scoreOf(p.id) >= 7).length;
+  const list = visiblePosts();
+  const { n, avg } = stats(list);
+  const total = list.length || 1;
+  const high = list.filter(p => scoreOf(p.id) >= 7).length;
   const pct = x => Math.round(x / total * 100);
-  $('#c-total').textContent = fmt(POSTS.length);
+  $('#c-total').textContent = fmt(list.length);
   $('#c-scored').textContent = fmt(n);
-  $('#c-unscored').textContent = fmt(POSTS.length - n);
+  $('#c-unscored').textContent = fmt(list.length - n);
   $('#c-avg').textContent = avg;
+  $('#c-avg').classList.toggle('na', avg === '—');
   $('#c-high').textContent = fmt(high);
-  $('#s-total').textContent = `${new Set(POSTS.map(p => p.date)).size} 天`;
+  $('#s-total').textContent = `${new Set(list.map(p => p.date)).size} 天`;
   $('#s-scored').textContent = `占 ${pct(n)}%`;
-  $('#s-unscored').textContent = (POSTS.length - n) ? '还没打分' : '全部评完';
+  $('#s-unscored').textContent = (list.length - n) ? '还没打分' : '全部评完';
   $('#s-avg').textContent = '0–10 分制';
   $('#s-high').textContent = n ? `占已评 ${Math.round(high / n * 100)}%` : '—';
   $('#b-total').style.width = '100%';
   $('#b-scored').style.width = pct(n) + '%';
-  $('#b-unscored').style.width = pct(POSTS.length - n) + '%';
+  $('#b-unscored').style.width = pct(list.length - n) + '%';
   $('#b-avg').style.width = Math.round((Number(avg) || 0) * 10) + '%';
   $('#b-high').style.width = pct(high) + '%';
-  $('#meta-line').textContent = `${fmt(POSTS.length)} 条对标帖 · 已评 ${fmt(n)} 条 · 均分 ${avg}`;
+  const label = acct ? (acctOf(acct) || {}).name || acct : '全部账号';
+  $('#meta-line').textContent = `${label} · ${fmt(list.length)} 条对标帖 · 已评 ${fmt(n)} 条 · 均分 ${avg}`;
   const sum = $('#sum-meta');
-  if (sum) sum.textContent = `均分 ${avg} · 已评 ${n}/${POSTS.length}`;
+  if (sum) sum.textContent = `均分 ${avg} · 已评 ${n}/${list.length}`;
+  renderTabs();
 }
 
 /* ---------- 图表 ---------- */
@@ -282,23 +328,24 @@ function donutChart(host, data, total, centerLabel) {
 }
 
 function renderCharts() {
+  const list = visiblePosts();
   const buckets = Array.from({ length: 11 }, (_, i) => ({ label: String(i), value: 0 }));
-  POSTS.forEach(p => { const s = scoreOf(p.id); if (s !== null) buckets[s].value += 1; });
+  list.forEach(p => { const s = scoreOf(p.id); if (s !== null) buckets[s].value += 1; });
   const colorFor = i => i <= 2 ? '#f87171' : i <= 4 ? '#fb923c' : i <= 6 ? '#eab308' : i <= 8 ? '#3b82f6' : '#34d399';
   buckets.forEach((b, i) => { b.color = colorFor(i); });
-  const { n } = stats();
+  const { n, avg } = stats(list);
   if (!n) {
     $('#ch-score').replaceChildren(el('div', 'empty', '还没有评分：点下面的 0–10 给对标帖打分'));
     $('#h-score').textContent = '';
   } else {
     vbarChart($('#ch-score'), buckets, { showValues: true, label: '评分分布' });
-    $('#h-score').textContent = `${fmt(n)} 条已评 · 均分 ${stats().avg}`;
+    $('#h-score').textContent = `${fmt(n)} 条已评 · 均分 ${avg}`;
   }
   donutChart($('#ch-progress'), [
     { label: '已评', value: n, color: '#34d399' },
-    { label: '未评', value: POSTS.length - n, color: '#4d4d4d' },
-  ], POSTS.length || 1, '已评');
-  $('#h-progress').textContent = `${fmt(POSTS.length - n)} 条未评`;
+    { label: '未评', value: list.length - n, color: '#4d4d4d' },
+  ], list.length || 1, '已评');
+  $('#h-progress').textContent = `${fmt(list.length - n)} 条未评`;
 }
 
 /* ---------- 卡片 ---------- */
@@ -306,7 +353,10 @@ function buildCard(p) {
   const card = el('div', 'card');
   card.dataset.id = p.id;
   const head = el('div', 'head');
-  head.append(el('span', 'badge', p.date), el('span', 'badge', p.chars + ' 字'));
+  const a = acctOf(p.acct);
+  const acctBadge = el('span', 'badge acct', a ? a.name : p.acct);
+  if (a && a.color) acctBadge.style.color = a.color;
+  head.append(el('span', 'badge', p.date), acctBadge, el('span', 'badge', p.chars + ' 字'));
   if (p.media) head.append(el('span', 'badge t', '带图'));
   const scoreTag = el('span', 'state');
   head.append(scoreTag);
@@ -359,7 +409,8 @@ function applyFilter() {
     const p = card._p;
     const s = scoreOf(p.id);
     let ok = true;
-    if (q && !p.text.toLowerCase().includes(q)) ok = false;
+    if (acct && p.acct !== acct) ok = false;
+    if (ok && q && !p.text.toLowerCase().includes(q)) ok = false;
     if (ok && date && p.date !== date) ok = false;
     if (ok && fs) {
       if (fs === 'un') ok = s === null;
@@ -371,9 +422,7 @@ function applyFilter() {
     card.hidden = !ok;
     if (ok) shown++;
   });
-  $('#c-total').textContent = POSTS.length;
-  $('#c-scored').textContent = stats().n;
-  $('#c-avg').textContent = stats().avg;
+  updateCounters();
 }
 
 /* ---------- 启动 ---------- */
@@ -392,12 +441,12 @@ const frag = document.createDocumentFragment();
   booting = false;
 })();
 
-[...new Set(POSTS.map(p => p.date))].sort().forEach(d => { const o = el('option', null, d); o.value = d; $('#f-date').append(o); });
+renderDates();
 
 ['q', 'f-score', 'f-date'].forEach(id => $('#' + id).addEventListener('input', applyFilter));
 $('#f-sort').addEventListener('change', () => {
   const mode = $('#f-sort').value;
-  const arr = [...POSTS].sort((a, b) => {
+  const arr = [...visiblePosts()].sort((a, b) => {
     if (mode === 'score') return (scoreOf(b.id) ?? -1) - (scoreOf(a.id) ?? -1);
     if (mode === 'views') return (b.views || 0) - (a.views || 0);
     return a.ts - b.ts;
@@ -406,15 +455,24 @@ $('#f-sort').addEventListener('change', () => {
   applyFilter();
 });
 
+// 按展示补分：用满 1–10 分，展示每上一个档位升一分；已评的不动。
+const VIEW_RULE = [
+  [1000000, 10, '≥100 万'], [500000, 9, '50–100 万'], [200000, 8, '20–50 万'],
+  [100000, 7, '10–20 万'], [50000, 6, '5–10 万'], [10000, 5, '1–5 万'],
+  [1000, 4, '1000–1 万'], [100, 3, '100–1000'], [10, 2, '10–100'], [0, 1, '<10'],
+];
+const viewScore = v => (VIEW_RULE.find(([lo]) => v >= lo) || [0, 1])[1];
+
 $('#autofill').addEventListener('click', () => {
-  const pending = POSTS.filter(p => scoreOf(p.id) === null);
+  const pending = visiblePosts().filter(p => scoreOf(p.id) === null);
   if (!pending.length) { toast('没有未评分的帖子了'); return; }
   const v = p => Number(p.views) || 0;
-  const n5 = pending.filter(p => v(p) > 10000).length;
-  const n4 = pending.filter(p => v(p) > 1000 && v(p) <= 10000).length;
-  const n1 = pending.length - n5 - n4;
-  if (!confirm(`给剩下 ${pending.length} 条按展示补分？\n\n>10000 → 5 分：${n5} 条\n1000–10000 → 4 分：${n4} 条\n≤1000 → 1 分：${n1} 条`)) return;
-  pending.forEach(p => { st[p.id] = v(p) > 10000 ? 5 : (v(p) > 1000 ? 4 : 1); });
+  const dist = {};
+  pending.forEach(p => { const s = viewScore(v(p)); dist[s] = (dist[s] || 0) + 1; });
+  const lines = VIEW_RULE.filter(([, s]) => dist[s])
+    .map(([, s, label]) => `${label} → ${s} 分：${dist[s]} 条`).join('\n');
+  if (!confirm(`给剩下 ${pending.length} 条按展示补分？\n\n${lines}`)) return;
+  pending.forEach(p => { st[p.id] = viewScore(v(p)); });
   save();
   document.querySelectorAll('.card').forEach(c => c.refresh && c.refresh());
   applyFilter();

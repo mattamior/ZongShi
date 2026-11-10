@@ -5,9 +5,14 @@ Saves every raw page, keeps a resumable cursor, and splits the authored statuses
 replies (have `replying_to`) and originals (no reply metadata). Nothing is published or
 authenticated: this client sends no cookies, tokens, or API keys.
 
+Defaults target the original benchmark account; pass --handle/--account-id
+(plus --since for a bounded window) to capture another account.
+
 Usage:
     python3 scripts/collect_target.py --output-dir data/target/<ts>
     python3 scripts/collect_target.py --output-dir data/target/<ts> --resume
+    python3 scripts/collect_target.py --handle btcmos --account-id 1865722200185307136 \
+        --output-dir data/target/btcmos --since 2026-10-20
 """
 from __future__ import annotations
 
@@ -98,7 +103,12 @@ def load_progress(path: Path) -> dict:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, required=True)
-    parser.add_argument("--profile-ref", default=f"id:{ACCOUNT_ID}")
+    parser.add_argument("--handle", default=HANDLE, help="expected screen name of the profile")
+    parser.add_argument("--account-id", default=ACCOUNT_ID, help="numeric user id; defaults to the original account")
+    parser.add_argument("--profile-ref", default=None,
+                        help="profile ref for the API; defaults to id:<account-id>")
+    parser.add_argument("--since", default=None,
+                        help="UTC date/datetime lower bound; stop paging once older and drop earlier rows")
     parser.add_argument("--resume", action="store_true", help="continue from source/progress.json")
     parser.add_argument("--sleep", type=float, default=1.2, help="seconds between page requests")
     parser.add_argument("--with-replies", type=int, default=1, choices=(0, 1),
@@ -107,7 +117,15 @@ def main() -> None:
     args = parser.parse_args()
 
     output_dir: Path = args.output_dir
-    profile_ref: str = args.profile_ref
+    handle: str = args.handle
+    expected_id: str = str(args.account_id)
+    profile_ref: str = args.profile_ref or f"id:{expected_id}"
+    since_ts = None
+    if args.since:
+        parsed = datetime.fromisoformat(args.since)
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+        since_ts = int(parsed.timestamp())
     pages_dir = output_dir / "source" / "pages"
     progress_path = output_dir / "source" / "progress.json"
 
@@ -133,9 +151,9 @@ def main() -> None:
     profile = as_object(profile_response.get("user"), "profile.user")
     returned_handle = profile.get("screen_name")
     account_id = profile.get("id")
-    if not isinstance(returned_handle, str) or returned_handle.casefold() != HANDLE.casefold():
+    if not isinstance(returned_handle, str) or returned_handle.casefold() != handle.casefold():
         raise ValueError(f"Profile endpoint resolved unexpected account: {returned_handle!r}")
-    if account_id != ACCOUNT_ID:
+    if str(account_id) != expected_id:
         raise ValueError(f"Profile endpoint resolved unexpected account id: {account_id!r}")
     reported_statuses = profile.get("statuses")
 
@@ -187,6 +205,10 @@ def main() -> None:
                 pagination_complete = True
                 termination_reason = "cursor_exhausted_after_empty_page"
             break
+        page_ts = [int(item["created_timestamp"]) for item in page_results if item.get("created_timestamp")]
+        if since_ts is not None and page_ts and min(page_ts) < since_ts:
+            termination_reason = "since_reached"
+            break
         if next_cursor is None or next_cursor == "":
             pagination_complete = True
             termination_reason = "cursor_exhausted_after_short_page" if len(page_results) < PAGE_SIZE else "full_page_without_cursor"
@@ -211,6 +233,18 @@ def main() -> None:
         )
         time.sleep(args.sleep + random.uniform(0.0, 0.4))
 
+    write_json(
+        progress_path,
+        {
+            "page_count": page_count,
+            "cursor": cursor,
+            "seen_cursors": sorted(seen_cursors),
+            "termination_reason": termination_reason,
+            "api_cursor_exhausted": pagination_complete,
+            "updated_at_utc": datetime.now(timezone.utc).isoformat(),
+        },
+    )
+
     timeline = {}
     duplicates = 0
     for status in all_results:
@@ -229,15 +263,20 @@ def main() -> None:
         if not isinstance(author, dict):
             continue
         if status.get("reposted_by") is not None:
-            if str((status["reposted_by"] or {}).get("id")) == ACCOUNT_ID:
+            if str((status["reposted_by"] or {}).get("id")) == expected_id:
                 reposted.append(status)
             continue
-        if str(author.get("id")) != ACCOUNT_ID:
+        if str(author.get("id")) != expected_id:
             continue
         authored.append(status)
     reposts = len(reposted)
     authored.sort(key=lambda item: int(item.get("created_timestamp") or 0))
 
+    captured_authored = len(authored)
+    if since_ts is not None:
+        in_window = lambda item: int(item.get("created_timestamp") or 0) >= since_ts
+        authored = [item for item in authored if in_window(item)]
+        reposted = [item for item in reposted if in_window(item)]
     replies = [item for item in authored if item.get("replying_to")]
     originals = [item for item in authored if not item.get("replying_to")]
 
@@ -254,10 +293,10 @@ def main() -> None:
     timestamps = [int(item["created_timestamp"]) for item in authored if item.get("created_timestamp")]
     collection = {
         "account": {
-            "handle": HANDLE,
-            "id": ACCOUNT_ID,
+            "handle": returned_handle,
+            "id": account_id,
             "display_name": profile.get("name"),
-            "profile_url": f"https://x.com/{HANDLE}",
+            "profile_url": f"https://x.com/{returned_handle}",
             "reported_status_count_at_capture": reported_statuses,
             "followers": profile.get("followers"),
             "following": profile.get("following"),
@@ -288,6 +327,8 @@ def main() -> None:
             "reported_vs_observed_ratio": round(len(authored) / reported_statuses, 4) if reported_statuses else None,
             "api_cursor_exhausted": pagination_complete,
             "termination_reason": termination_reason,
+            "window_since": args.since,
+            "before_window_dropped": captured_authored - len(authored),
         },
         "coverage_note": (
             f"termination_reason={termination_reason!r}; api_cursor_exhausted={pagination_complete}. "

@@ -38,11 +38,21 @@ h1{margin:0;font-size:16px;font-weight:650;letter-spacing:-.01em;white-space:now
 /* ---------- 主区 ---------- */
 .shell{max-width:1560px;margin:0 auto;padding:16px 24px 0}
 
+/* 对标账号切换 */
+.acct-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.acct-tab{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 12px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--dim);font-size:12.5px}
+.acct-tab:hover{color:var(--fg);background:var(--card2)}
+.acct-tab .n{font-size:11px;color:var(--dim2);background:rgba(255,255,255,.06);border-radius:999px;padding:0 6px;line-height:17px}
+.acct-tab.on{color:var(--fg);background:rgba(255,255,255,.06);border-color:var(--acct-color,var(--acc))}
+.acct-tab.on .n{color:var(--fg)}
+.badge.acct{font-weight:500}
+
 /* KPI */
 .kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
 .kpi{background:var(--card);border:1px solid var(--line2);border-radius:var(--r);padding:15px 18px 13px}
 .k-label{font-size:12px;color:var(--dim2);margin-bottom:2px}
 .k-num{font-size:38px;font-weight:700;letter-spacing:-.02em;line-height:1.15}
+.k-num.na{color:var(--dim2)}
 .k-num.ok{color:var(--ok)} .k-num.no{color:var(--no)} .k-num.dup{color:var(--dup)} .k-num.edit{color:var(--edit)}
 .k-sub{font-size:11.5px;color:var(--dim2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .k-sub b{color:var(--dim)}
@@ -65,6 +75,8 @@ details.stats>summary::-webkit-details-marker{display:none}
 .ch-body svg{width:100%;height:auto;display:block}
 @media(max-width:1240px){.charts{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:680px){.charts{grid-template-columns:1fr}}
+.charts.charts2{grid-template-columns:1.55fr 1fr}
+@media(max-width:680px){.charts.charts2{grid-template-columns:1fr}}
 
 /* 环图 */
 .donut-wrap{display:flex;align-items:center;gap:14px;width:100%}
@@ -221,6 +233,8 @@ main{max-width:1560px;margin:0 auto;padding:14px 24px 90px;display:grid;grid-tem
   #toast.show{transform:none}
 }
 @media(max-width:400px){
+  .acct-tabs{gap:4px;margin-bottom:10px}
+  .acct-tab{height:30px;padding:0 9px;font-size:12px}
   .head{font-size:11px;gap:4px}
   .badge{font-size:10.5px;padding:1px 6px}
 }
