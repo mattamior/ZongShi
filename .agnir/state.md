@@ -30,5 +30,6 @@
 - 2026-11-09：候选补充——`data/drafts/2026-11-09-r2.{jsonl,md}` 24 条（晚间 18:00–23:45）、`r3` 100 条（11-09 19:00 → 11-10 19:45；社会 25 / 时政 11 / 民生 44 = 80%），均由 `data/eval/build_11-09_r2.py` / `build_11-09_r3.py` 生成，guard 0 拦截、全挂 `@grok`；热榜快照留档 `data/news/2026-11-09-1804.jsonl`、`-morning.jsonl`。
 - 2026-11-09：审稿站上线 Cloudflare Pages（项目 `zongshi-review`，自定义域 `https://zs.lapplax.com`）；页面去掉账号列与筛选，非 localhost 隐藏「保存到仓库」，静态包由 `site/build_dist.py` 生成并带 `X-Robots-Tag: noindex`。线上与本地构建哈希一致；手机端布局、线上导出回传闭环未验证。
 - 2026-11-10：线上状态同步——`build_dist.py` 把仓库里保存的审稿与评分注入部署包（`window.__ZS_SEED__`），线上打开即为 57 已用 / 24 重复 / 349 废弃、评分 298/298；本机 localStorage 优先。仓库 → 线上单向，回传仍走导出。
+- 2026-11-10：审稿站改双向——Pages 的 `_worker.js` 提供 `GET/POST /api/state`（KV `ZS_STATE`），页面启动拉取、标记即回写；`scripts/sync_state.py pull|push` 打通仓库；本地 `serve.py` 同形状接口直接写仓库文件。线上实测：554 条 / 57 已用 / 24 重复 / 349 废弃，评分 298/298，点击改动即时落 KV。接口无鉴权，见 decisions。
 - 审稿站现有 554 条（11-06/07/08/09/10 五个日期），`site/target.html` 298 条评分，`site/plan_dedupe.py` 预置 19 条逐字重复。
 - 未在线复测账号、接口、mt.ai 接管状态，未运行采集、互动、发送或资料修改。

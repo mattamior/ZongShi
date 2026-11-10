@@ -1,0 +1,8 @@
+name = "zongshi-review"
+pages_build_output_dir = "site/dist"
+compatibility_date = "2026-11-01"
+
+# 审稿站在线状态：/api/state 读写这个命名空间
+[[kv_namespaces]]
+binding = "ZS_STATE"
+id = "9a1ab08506224ea6afb671376d17e2f1"

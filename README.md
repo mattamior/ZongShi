@@ -46,9 +46,9 @@ python3 site/fetch_images.py               # 抓新闻配图（原文 og:image �
 python3 site/build_target.py               # 生成对标账号评分页 site/target.html（298 条，0–10 分）
 python3 site/plan_dedupe.py                # 按正文去重：逐字或几乎一样的帖子只留一条，其余标记「重复」
 python3 site/build_site.py                 # 读 data/drafts/*.jsonl，生成 site/index.html（数据内嵌）
-python3 site/serve.py 8777                  # 静态服务 + POST /save（页面上的「保存到仓库」直接写文件）
+python3 site/serve.py 8777                  # 静态服务 + GET/POST /api/state + POST /save（直接写仓库文件）
 # 打开 http://127.0.0.1:8777/index.html
-python3 site/build_dist.py                 # 打包 site/dist（页面 + 样式 + 配图 + noindex 头）
+python3 site/build_dist.py                 # 打包 site/dist（页面 + 样式 + 配图 + noindex 头 + _worker.js）
 npx wrangler pages deploy site/dist --project-name zongshi-review
 # 线上 https://zs.lapplax.com（自定义域）＝ https://zongshi-review.pages.dev（Pages 项目 zongshi-review，生产分支 main）
 ```
@@ -60,7 +60,9 @@ npx wrangler pages deploy site/dist --project-name zongshi-review
 - 单条想指定配图：在 `data/drafts/image_overrides.json` 里加 `"<id>": {"q": "搜索关键词", "credit": "百度图片"}`（也可用 `url` 钉死），再跑 `fetch_images.py`。
 - 配图是新闻图：先取原文 `og:image`，取不到用图片搜索兜底，仍没有就不配图（日常观察类本来没有）。图片放正文右侧、点击看大图，图下标注「原文 / 百度图片（非原文配图）」；**「复制图片」与正文「复制」是两颗独立按钮**。
 - 状态（已用/废弃/改动/配图）存在浏览器 localStorage；点「保存到仓库」直接把 `data/drafts/review.json` 写进仓库（需要 `site/serve.py`），也可「导出」下载。
-- 部署到 Cloudflare Pages 后页面同样能标状态，但只存在该浏览器的 localStorage：`POST /save` 只有本地 `serve.py` 提供，线上按钮自动隐藏；线上标的改动用「导出」下载 JSON，再放回 `data/drafts/review.json` / `data/eval/target-ratings.json`。`build_dist.py` 构建时会把仓库里的 `review.json` / `target-ratings.json` 注入页面（`window.__ZS_SEED__`），换设备打开也是已标状态；本机已有 localStorage 记录优先，不会被覆盖。线上带 `X-Robots-Tag: noindex`，但知道 URL 的人仍可打开。
+- 状态（已用/废弃/重复/改动/配图/评分）**双向同步**：页面启动先 `GET /api/state` 拉线上状态，之后每次标记都会 `POST /api/state` 写回（800ms 防抖）。线上由 `site/worker.js`（部署成 `_worker.js`）+ KV `ZS_STATE` 承载；本地 `site/serve.py` 提供同形状接口，直接读写仓库文件。localStorage 只是离线缓存。
+- 仓库 ↔ 线上用 `scripts/sync_state.py`：`pull` 把线上状态并回 `data/drafts/review.json` 与 `data/eval/target-ratings.json`（保留原有顺序，只追加新 id）；`push` 把仓库状态推到线上（`--replace` 整段覆盖）。`show` 只看线上摘要。
+- `build_dist.py` 仍会把仓库状态注入页面（`window.__ZS_SEED__`）作为离线兜底：接口不可用时按仓库状态渲染。线上带 `X-Robots-Tag: noindex`，但知道 URL 的人仍可打开；`/api/state` 无鉴权，最坏情况是被改写标记，可用 `push --replace` 从仓库恢复。
 - 快捷键：`j`/`k` 切换、`c` 复制、`d` 重复、`x` 废弃、`e` 编辑。
 - 顶部「隐藏重复」默认勾选：`plan_dedupe.py` 把正文逐字/近似重复的帖子（优先留选定、备选，其次按时间）预置为「重复」并隐藏；同主题换角度的帖子不算重复。取消勾选或把状态筛成「重复」才看得到。
 - 必须用 http 打开：`file://` 下浏览器不给剪贴板权限，复制会失败。

@@ -54,8 +54,13 @@
 <script>
 const POSTS = __DATA__;
 const KEY = 'zs-target-ratings';
+let booting = true;
+let queued = null;
 const st = (() => { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } })();
-const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { toast('本地存储写入失败', true); } };
+const save = () => {
+  try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { toast('本地存储写入失败', true); }
+  scheduleSync();
+};
 
 // 部署包里注入的仓库评分；localStorage 已有记录优先。
 (() => {
@@ -68,6 +73,44 @@ const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catc
   });
   if (changed) save();
 })();
+
+/* ---------- 与线上同步（/api/state） ---------- */
+const SYNC = '/api/state';
+function scheduleSync() {
+  if (booting) return;
+  clearTimeout(queued);
+  queued = setTimeout(pushState, 800);
+}
+
+async function pushState() {
+  try {
+    const r = await fetch(SYNC, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ ratings: st }),
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+  } catch (e) {
+    toast('同步失败：评分只存在本机', true);
+  }
+}
+
+async function pullState() {
+  try {
+    const r = await fetch(SYNC, { cache: 'no-store' });
+    if (!r.ok) return;
+    const d = await r.json();
+    const remote = (d && d.ratings) || {};
+    const localOnly = Object.keys(st).some(id => !(id in remote));
+    Object.entries(remote).forEach(([id, v]) => { if (typeof v === 'number') st[id] = v; });
+    try { localStorage.setItem(KEY, JSON.stringify(st)); }
+    catch (e) { toast('本地存储写入失败', true); }
+    if (localOnly) { booting = false; scheduleSync(); }
+  } catch (e) {
+    /* 接口不可用就退回本机记录 */
+  }
+}
+
 const $ = s => document.querySelector(s);
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 let toastTimer = null;
@@ -233,13 +276,17 @@ function applyFilter() {
 /* ---------- 启动 ---------- */
 const list = $('#list');
 const frag = document.createDocumentFragment();
-[...POSTS].forEach(p => {
-  const c = buildCard(p);
-  c._p = p;
-  frag.append(c);
-});
-list.append(frag);
-applyFilter();
+(async () => {
+  await pullState();
+  [...POSTS].forEach(p => {
+    const c = buildCard(p);
+    c._p = p;
+    frag.append(c);
+  });
+  list.append(frag);
+  applyFilter();
+  booting = false;
+})();
 
 [...new Set(POSTS.map(p => p.date))].sort().forEach(d => { const o = el('option', null, d); o.value = d; $('#f-date').append(o); });
 
@@ -301,13 +348,24 @@ $('#file').addEventListener('change', async () => {
   try {
     const rows = JSON.parse(await f.text());
     rows.forEach(r => { if (r && r.id && typeof r.score === 'number') st[r.id] = r.score; });
-    save(); toast(`已导入 ${rows.length} 条`); setTimeout(() => location.reload(), 500);
+    save(); await pushState(); toast(`已导入 ${rows.length} 条`); setTimeout(() => location.reload(), 500);
   } catch (e) { toast('导入失败：不是合法 JSON', true); }
 });
 
-$('#reset').addEventListener('click', () => {
-  if (!confirm('清空所有评分？')) return;
-  localStorage.removeItem(KEY); location.reload();
+$('#reset').addEventListener('click', async () => {
+  if (!confirm('清空所有评分？线上记录也会清空。')) return;
+  localStorage.removeItem(KEY);
+  try {
+    const r = await fetch(SYNC, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ ratings: {}, replace: true }),
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+  } catch (e) {
+    toast('线上评分没清掉，下次打开会回来', true);
+  }
+  location.reload();
 });
 </script>
 </body>

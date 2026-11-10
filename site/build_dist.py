@@ -16,6 +16,7 @@ import shutil
 ROOT = pathlib.Path(__file__).resolve().parent
 DIST = ROOT / "dist"
 PAGES = ("index.html", "target.html", "style.css")
+WORKER = ROOT / "worker.js"  # 部署为 _worker.js：静态页 + /api/state
 HEADERS = """/*
   X-Robots-Tag: noindex, nofollow
   X-Content-Type-Options: nosniff
@@ -79,6 +80,7 @@ def main() -> None:
         else:
             shutil.copy2(ROOT / name, DIST / name)
     shutil.copytree(ROOT / "img", DIST / "img")
+    shutil.copy2(WORKER, DIST / "_worker.js")
     (DIST / "_headers").write_text(HEADERS, encoding="utf-8")
     (DIST / "robots.txt").write_text(ROBOTS, encoding="utf-8")
     total = sum(p.stat().st_size for p in DIST.rglob("*") if p.is_file())

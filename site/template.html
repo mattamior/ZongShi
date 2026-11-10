@@ -52,6 +52,8 @@
 <script>
 const POSTS = __DATA__;
 const KEY = 'zs-review-v2';
+let booting = true;   // 启动合并期间不回写，避免把刚拉下来的状态再推一遍
+let queued = null;
 const OLD = 'zs-review-2026-11-09';
 
 const st = (() => {
@@ -72,6 +74,7 @@ const st = (() => {
 const save = () => {
   try { localStorage.setItem(KEY, JSON.stringify(st)); }
   catch (e) { toast('本地存储写入失败，可能已满', true); }
+  scheduleSync();
 };
 const rec = id => st[id] || (st[id] = {});
 const byId = Object.fromEntries(POSTS.map(p => [p.id, p]));
@@ -88,6 +91,44 @@ const byId = Object.fromEntries(POSTS.map(p => [p.id, p]));
   });
   if (changed) save();
 })();
+
+/* ---------- 与线上同步（/api/state） ---------- */
+const SYNC = '/api/state';
+function scheduleSync() {
+  if (booting) return;
+  clearTimeout(queued);
+  queued = setTimeout(pushState, 800);
+}
+
+async function pushState() {
+  try {
+    const r = await fetch(SYNC, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ review: st }),
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+  } catch (e) {
+    toast('同步失败：改动只存在本机', true);
+  }
+}
+
+async function pullState() {
+  try {
+    const r = await fetch(SYNC, { cache: 'no-store' });
+    if (!r.ok) return;
+    const d = await r.json();
+    const remote = (d && d.review) || {};
+    const localOnly = Object.keys(st).some(id => byId[id] && !(id in remote));
+    Object.entries(remote).forEach(([id, v]) => { if (byId[id]) st[id] = v; });
+    try { localStorage.setItem(KEY, JSON.stringify(st)); }
+    catch (e) { toast('本地存储写入失败，可能已满', true); }
+    if (localOnly) { booting = false; scheduleSync(); }
+  } catch (e) {
+    /* 接口不可用就退回本机记录 */
+  }
+}
+
 const $ = s => document.querySelector(s);
 const el = (tag, cls, text) => {
   const n = document.createElement(tag);
@@ -404,11 +445,15 @@ function applyFilter() {
 /* ---------- 启动 ---------- */
 const list = $('#list');
 const frag = document.createDocumentFragment();
-POSTS.forEach(p => frag.append(buildCard(p)));
-list.append(frag);
-applyFilter();
-updateCounters();
-renderCharts();
+(async () => {
+  await pullState();
+  POSTS.forEach(p => frag.append(buildCard(p)));
+  list.append(frag);
+  applyFilter();
+  updateCounters();
+  renderCharts();
+  booting = false;
+})();
 
 const dates = [...new Set(POSTS.map(p => p.date))].sort();
 dates.forEach(d => {
@@ -483,14 +528,25 @@ $('#file').addEventListener('change', async () => {
       if (r.image) t.image = r.image;
     });
     save();
+    await pushState();
     toast(`已导入 ${rows.length} 条，刷新中`);
     setTimeout(() => location.reload(), 600);
   } catch (e) { toast('导入失败：不是合法 JSON', true); }
 });
 
-$('#reset').addEventListener('click', () => {
-  if (!confirm('清空本机所有标记（已用/废弃/重复/改动/配图）？')) return;
+$('#reset').addEventListener('click', async () => {
+  if (!confirm('清空所有标记（已用/废弃/重复/改动/配图）？线上记录也会清空。')) return;
   localStorage.removeItem(KEY);
+  try {
+    const r = await fetch(SYNC, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ review: {}, replace: true }),
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+  } catch (e) {
+    toast('线上记录没清掉，下次打开会回来', true);
+  }
   location.reload();
 });
 
