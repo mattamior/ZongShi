@@ -56,6 +56,18 @@ const POSTS = __DATA__;
 const KEY = 'zs-target-ratings';
 const st = (() => { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } })();
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { toast('本地存储写入失败', true); } };
+
+// 部署包里注入的仓库评分；localStorage 已有记录优先。
+(() => {
+  const seed = window.__ZS_SEED__ || {};
+  let changed = false;
+  Object.entries(seed).forEach(([id, v]) => {
+    if (typeof v !== 'number' || st[id] != null) return;
+    st[id] = v;
+    changed = true;
+  });
+  if (changed) save();
+})();
 const $ = s => document.querySelector(s);
 const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
 let toastTimer = null;

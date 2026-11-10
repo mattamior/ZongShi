@@ -29,5 +29,6 @@
 - 2026-11-09：审稿与评分落地——Principal 在审稿站标记后「保存到仓库」：`data/drafts/review.json` 430 条（已用 57 / 重复 24 / 废弃 349），`data/eval/target-ratings.json` 298 条（>4 分 61）。`scripts/style_priority.py` 按人工评分重算 `data/eval/target-priority.json`（scored 298 / kept 61）；画像改为只统计 ≤90 字帖（对标账号 300+ 字爆料长文不进基准，p90 由 256 降到 68）。同日 18:36 Principal 取消分号，稿件不再标 account、按单号频率出候选、自选，见 decisions。
 - 2026-11-09：候选补充——`data/drafts/2026-11-09-r2.{jsonl,md}` 24 条（晚间 18:00–23:45）、`r3` 100 条（11-09 19:00 → 11-10 19:45；社会 25 / 时政 11 / 民生 44 = 80%），均由 `data/eval/build_11-09_r2.py` / `build_11-09_r3.py` 生成，guard 0 拦截、全挂 `@grok`；热榜快照留档 `data/news/2026-11-09-1804.jsonl`、`-morning.jsonl`。
 - 2026-11-09：审稿站上线 Cloudflare Pages（项目 `zongshi-review`，自定义域 `https://zs.lapplax.com`）；页面去掉账号列与筛选，非 localhost 隐藏「保存到仓库」，静态包由 `site/build_dist.py` 生成并带 `X-Robots-Tag: noindex`。线上与本地构建哈希一致；手机端布局、线上导出回传闭环未验证。
+- 2026-11-10：线上状态同步——`build_dist.py` 把仓库里保存的审稿与评分注入部署包（`window.__ZS_SEED__`），线上打开即为 57 已用 / 24 重复 / 349 废弃、评分 298/298；本机 localStorage 优先。仓库 → 线上单向，回传仍走导出。
 - 审稿站现有 554 条（11-06/07/08/09/10 五个日期），`site/target.html` 298 条评分，`site/plan_dedupe.py` 预置 19 条逐字重复。
 - 未在线复测账号、接口、mt.ai 接管状态，未运行采集、互动、发送或资料修改。

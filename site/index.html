@@ -75,6 +75,19 @@ const save = () => {
 };
 const rec = id => st[id] || (st[id] = {});
 const byId = Object.fromEntries(POSTS.map(p => [p.id, p]));
+
+// build_dist.py 在部署包页面前注入 window.__ZS_SEED__（仓库里保存的状态）；
+// localStorage 里已有的记录优先，不覆盖。
+(() => {
+  const seed = window.__ZS_SEED__ || {};
+  let changed = false;
+  Object.entries(seed).forEach(([id, v]) => {
+    if (!byId[id] || st[id]) return;
+    st[id] = v;
+    changed = true;
+  });
+  if (changed) save();
+})();
 const $ = s => document.querySelector(s);
 const el = (tag, cls, text) => {
   const n = document.createElement(tag);

@@ -60,7 +60,7 @@ npx wrangler pages deploy site/dist --project-name zongshi-review
 - 单条想指定配图：在 `data/drafts/image_overrides.json` 里加 `"<id>": {"q": "搜索关键词", "credit": "百度图片"}`（也可用 `url` 钉死），再跑 `fetch_images.py`。
 - 配图是新闻图：先取原文 `og:image`，取不到用图片搜索兜底，仍没有就不配图（日常观察类本来没有）。图片放正文右侧、点击看大图，图下标注「原文 / 百度图片（非原文配图）」；**「复制图片」与正文「复制」是两颗独立按钮**。
 - 状态（已用/废弃/改动/配图）存在浏览器 localStorage；点「保存到仓库」直接把 `data/drafts/review.json` 写进仓库（需要 `site/serve.py`），也可「导出」下载。
-- 部署到 Cloudflare Pages 后页面同样能标状态，但只存在该浏览器的 localStorage：`POST /save` 只有本地 `serve.py` 提供，线上按钮自动隐藏；线上标的改动用「导出」下载 JSON，再放回 `data/drafts/review.json` / `data/eval/target-ratings.json`。线上带 `X-Robots-Tag: noindex`，但知道 URL 的人仍可打开。
+- 部署到 Cloudflare Pages 后页面同样能标状态，但只存在该浏览器的 localStorage：`POST /save` 只有本地 `serve.py` 提供，线上按钮自动隐藏；线上标的改动用「导出」下载 JSON，再放回 `data/drafts/review.json` / `data/eval/target-ratings.json`。`build_dist.py` 构建时会把仓库里的 `review.json` / `target-ratings.json` 注入页面（`window.__ZS_SEED__`），换设备打开也是已标状态；本机已有 localStorage 记录优先，不会被覆盖。线上带 `X-Robots-Tag: noindex`，但知道 URL 的人仍可打开。
 - 快捷键：`j`/`k` 切换、`c` 复制、`d` 重复、`x` 废弃、`e` 编辑。
 - 顶部「隐藏重复」默认勾选：`plan_dedupe.py` 把正文逐字/近似重复的帖子（优先留选定、备选，其次按时间）预置为「重复」并隐藏；同主题换角度的帖子不算重复。取消勾选或把状态筛成「重复」才看得到。
 - 必须用 http 打开：`file://` 下浏览器不给剪贴板权限，复制会失败。
