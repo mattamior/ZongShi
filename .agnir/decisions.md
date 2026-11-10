@@ -3,6 +3,7 @@
 - **新增对标账号（2026-11-10，Principal）**：把 https://x.com/btcmos（香港老雷，美股 / BTC / AI）加入对标。采集口径与主对标一致——FxTwitter 公开接口、无登录、窗口 `2026-10-20` 起，本次取到 514 条原创帖；不追更早历史，也不称全量。评分页按账号给页签，评分仍是全局 `{id: score}`（ID 唯一，线上 KV 形状不变）；`style_priority.py` 按账号分块。@btcmos 未评分前不进入 `>4 分` 起草参考，默认生成口径仍是主对标。
 - **评分落地方式（2026-11-09）**：浏览器 localStorage 无法被外部读取（`~/Library/Application Support/Google/Chrome` 受 macOS 保护，Operation not permitted），因此页面加「保存到仓库」按钮，经 `site/serve.py` 的 `POST /save` 直接写 `data/eval/target-ratings.json` 与 `data/drafts/review.json`。导出下载仍保留为兜底。
 - **起草参考范围（2026-11-09，Principal）**：只参考对标评分 **>4 分**的帖子起草；≤4 分不作为模仿对象。落地为 `scripts/style_priority.py --min 4` 生成的 `data/eval/target-priority.json`（当前 298 条全量里保留 59 条）。
+- **生成参考改用双账号（2026-11-10，Principal「按最新参考」）**：`data/eval/target-priority.json` 同时取 @FKFKFKFKFKTB 与 @btcmos 评分 **>4** 的帖子（fkfk 61 / btcmos 331）；@btcmos 的分数来自页面「按展示补分」（1–10 档），8–10 分是高展示样本。生成仍按主对标的短句/提问句式，不复制两号的具体事件与人物。今日晚场 29 条按此口径写。
 - **补分口径改为 1–10（2026-11-10，Principal）**：「既然是 1–10 分，就按规则用满，10 分是上限」。未评分帖子按展示量补分：≥100 万→10、50–100 万→9、20–50 万→8、10–20 万→7、5–10 万→6、1–5 万→5、1000–1 万→4、100–1000→3、10–100→2、<10→1；已评的不动。1 万展示仍是「>4 分」门槛的下界（1–5 万记 5 分），1 万以下补到 1–4 分。页面按钮与 `scripts/fill_ratings.py` 同规则；旧 5 分上限口径作废。
 - **对标帖补分口径（2026-11-09，Principal）**：未逐条评分的帖子按展示量兜底——>10000 记 5 分，1000–10000 记 4 分，≤1000 记 1 分；已评的分数不动。页面按钮与服务端 `scripts/fill_ratings.py` 同规则。（2026-11-10 已被上面的 1–10 档位取代，保留为历史。）
 - **审稿站排版（2026-11-09，Principal）**：两页共用顶部导航（稿池 / 对标评分）、统一 `site/style.css`；工具栏单行横向滚动，图表移出吸顶区并与卡片区同宽。

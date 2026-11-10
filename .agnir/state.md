@@ -33,5 +33,7 @@
 - 2026-11-10：审稿站改双向——Pages 的 `_worker.js` 提供 `GET/POST /api/state`（KV `ZS_STATE`），页面启动拉取、标记即回写；`scripts/sync_state.py pull|push` 打通仓库；本地 `serve.py` 同形状接口直接写仓库文件。线上实测：554 条 / 57 已用 / 24 重复 / 349 废弃，评分 298/298，点击改动即时落 KV。接口无鉴权，见 decisions。
 - 2026-11-10：页面按 mt.ai 看板重排——KPI 数字卡、四张带坐标轴的图表、吸顶工具栏、两栏列表，评分页同款；图表仍是自绘 SVG，无外部依赖。线上与本地一致，点击标记会即时更新计数与右上同步徽章。
 - 2026-11-10：新增对标账号 **@btcmos（香港老雷）**——FxTwitter 公开接口采集 2026-10-20 → 11-10 的 **514 条原创帖**（30 页 / 560 条本人状态），落 `data/target/btcmos-20261110/`；评分页改为多账号（`data/target/accounts.json`，812 条，账号页签 + 徽章），`style_priority.py` 按账号分块输出。该账号评分仍 0 条，尚未进入起草参考；同日已部署到 `zs.lapplax.com` 并实测线上 812 / 298 / 514 页签与同步正常。同日按 Principal 意见把「按展示补分」从 5 分上限改为用满 1–10（≥100 万→10 … <10→1），页面与 `fill_ratings.py` 同步；btcmos 514 条若补分将得到 10×5 / 9×8 / 8×25 / 7×25 / 6×55 / 5×213 / 4×180 / 3×3。证据 `.agnir/evidence/2026-11-10-btcmos-benchmark.md`。
-- 审稿站现有 554 条（11-06/07/08/09/10 五个日期），`site/target.html` 812 条可评（主对标 298 / 香港老雷 514；已评 298），`site/plan_dedupe.py` 预置 19 条逐字重复。
+- 2026-11-10：晚场候选 29 条（19:00–23:45，`data/drafts/2026-11-10.{jsonl,md}`）——来源 `data/news/2026-11-10.jsonl`（三源 75 条，19:00 抓取），参考两账号评分 >4 的帖子（fkfk 61 / btcmos 331）；guard 0 拦截，全部挂 `@grok`。审稿站重建为 583 条并部署，线上实测 29 条新稿与日期筛选正常；仍未发布、未排期。
+- 2026-11-10：修 `scripts/sync_state.py` 的 `target_ids()`——它只读主对标语料，导致 btcmos 的 514 条评分在 pull/push 时被当未知 id 丢弃；改为读 `data/target/accounts.json`。修复后拉回线上 812 条评分（用户已在页面按展示补分），`style_priority.py` 重算为 kept 392（fkfk 61 / btcmos 331）。
+- 审稿站现有 583 条（11-06/07/08/09/10 五个日期），`site/target.html` 812 条可评（主对标 298 / 香港老雷 514；已评 812），`site/plan_dedupe.py` 预置 19 条逐字重复。
 - @btcmos 采集走 FxTwitter 公开接口、无登录；本次未点赞 / 关注 / 发送，未修改账号资料，未在线复测真实账号与 mt.ai 接管状态。

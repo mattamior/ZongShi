@@ -22,7 +22,7 @@ import urllib.request
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 REVIEW = ROOT / "data/drafts/review.json"
 RATINGS = ROOT / "data/eval/target-ratings.json"
-TARGET_SRC = ROOT / "data/target/posts-merged/posts.jsonl"
+MANIFEST = ROOT / "data/target/accounts.json"
 DEFAULT_URL = "https://zs.lapplax.com/api/state"
 STATUS = {"used": "used", "rejected": "rejected", "duplicate": "dup", "edited": "edited"}
 BACK = {"used": "used", "rejected": "rejected", "dup": "duplicate"}
@@ -56,9 +56,14 @@ def drafts() -> dict[str, dict]:
 
 
 def target_ids() -> set[str]:
-    if not TARGET_SRC.exists():
+    """所有对标账号语料的帖子 id；只认清单里的账号，防止未知 id 写回仓库。"""
+    if not MANIFEST.exists():
         return set()
-    return {json.loads(l)["id"] for l in TARGET_SRC.read_text(encoding="utf-8").splitlines() if l.strip()}
+    ids: set[str] = set()
+    for acct in json.loads(MANIFEST.read_text(encoding="utf-8"))["accounts"]:
+        path = ROOT / acct["posts"]
+        ids.update(json.loads(l)["id"] for l in path.read_text(encoding="utf-8").splitlines() if l.strip())
+    return ids
 
 
 def to_server(review_rows: list[dict], rating_rows: list[dict], known: set[str], targets: set[str]) -> dict:
